@@ -1,0 +1,333 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --muted: #6b7280;
+  --accent: #10b981;
+  --accent-dark: #059669;
+  --accent-soft: #ecfdf5;
+  --line: #e8e8e8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-soft: var(--accent-soft);
+  --color-line: var(--line);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---------- animated hero grid ---------- */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(10, 10, 10, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
+}
+
+.hero-glow {
+  background: radial-gradient(
+    circle at center,
+    rgba(16, 185, 129, 0.14) 0%,
+    rgba(16, 185, 129, 0.05) 35%,
+    transparent 70%
+  );
+}
+
+/* ---------- floating cards ---------- */
+.float-card {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(10, 10, 10, 0.07);
+  box-shadow:
+    0 1px 2px rgba(10, 10, 10, 0.04),
+    0 12px 32px rgba(10, 10, 10, 0.08);
+  will-change: transform;
+}
+
+/* ---------- generic card ---------- */
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease;
+}
+
+.panel:hover {
+  transform: translateY(-6px);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow:
+    0 1px 2px rgba(10, 10, 10, 0.04),
+    0 24px 48px -12px rgba(10, 10, 10, 0.12);
+}
+
+/* ---------- skeleton doc lines (PRD visual) ---------- */
+@keyframes line-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.doc-line {
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.in-view .doc-line {
+  animation: line-grow 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------- pulse for AI visual ---------- */
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.pulse-dot {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
+
+/* ---------- dashed flow line ---------- */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+
+.flow-line {
+  stroke-dasharray: 6 6;
+  animation: dash-flow 1.4s linear infinite;
+}
+
+/* ---------- marquee ---------- */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
+/* ---------- bars ---------- */
+@keyframes bar-grow {
+  from { transform: scaleY(0.15); }
+  to { transform: scaleY(1); }
+}
+
+.bar-anim {
+  transform: scaleY(0.15);
+  transform-origin: bottom;
+}
+
+.in-view .bar-anim {
+  animation: bar-grow 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------- service visuals replay on card hover ---------- */
+@keyframes bar-grow-replay {
+  from { transform: scaleY(0.15); }
+  to { transform: scaleY(1); }
+}
+
+.service-card:hover .bar-anim {
+  animation: bar-grow-replay 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes line-grow-replay {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.service-card:hover .doc-line {
+  animation: line-grow-replay 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes path-redraw {
+  from { stroke-dashoffset: 260; }
+  to { stroke-dashoffset: 0; }
+}
+
+.service-card:hover .strategy-path {
+  stroke-dasharray: 260 !important;
+  animation: path-redraw 1.1s ease-in-out forwards;
+}
+
+@keyframes node-hop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.service-card:hover .wf-node-1 { animation: node-hop 0.6s ease-in-out; }
+.service-card:hover .wf-node-2 { animation: node-hop 0.6s ease-in-out 0.12s; }
+.service-card:hover .wf-node-3 { animation: node-hop 0.6s ease-in-out 0.24s; }
+
+@keyframes ai-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.service-card:hover .ai-node { animation: ai-blink 0.9s ease-in-out infinite; }
+
+@keyframes avatar-wave {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-9px); }
+}
+
+.service-card:hover .lead-avatar { animation: avatar-wave 0.7s ease-in-out; }
+
+/* ---------- footer typist scene ---------- */
+@keyframes arm-tap-l {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes arm-tap-r {
+  0%, 100% { transform: rotate(4deg); }
+  50% { transform: rotate(0deg); }
+}
+
+.typist .arm-l {
+  transform-origin: 262px 172px;
+  animation: arm-tap-l 0.22s linear infinite;
+}
+
+.typist .arm-r {
+  transform-origin: 284px 168px;
+  animation: arm-tap-r 0.22s linear infinite 0.11s;
+}
+
+@keyframes head-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(2.5px) rotate(1.2deg); }
+}
+
+.typist .head {
+  transform-origin: 276px 140px;
+  animation: head-bob 2.6s ease-in-out infinite;
+}
+
+@keyframes eye-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.typist .eye {
+  transform-origin: 290px 128px;
+  animation: eye-blink 3.4s linear infinite;
+}
+
+@keyframes code-type {
+  0% { transform: scaleX(0); }
+  12%, 82% { transform: scaleX(1); }
+  88%, 100% { transform: scaleX(0); }
+}
+
+.typist .code-line {
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: code-type 6s ease-out infinite;
+}
+
+.typist .cl-1 { animation-delay: 0s; }
+.typist .cl-2 { animation-delay: 0.7s; }
+.typist .cl-3 { animation-delay: 1.4s; }
+.typist .cl-4 { animation-delay: 2.1s; }
+.typist .cl-5 { animation-delay: 2.8s; }
+
+@keyframes caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.typist .screen-caret { animation: caret-blink 0.8s steps(1) infinite; }
+
+@keyframes steam-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  35% { opacity: 0.8; }
+  100% { transform: translateY(-14px); opacity: 0; }
+}
+
+.typist .s-1 { animation: steam-rise 2.2s ease-out infinite; }
+.typist .s-2 { animation: steam-rise 2.2s ease-out infinite 1.1s; }
+
+@keyframes spark-pop {
+  0%, 70%, 100% { transform: translateY(0); opacity: 0; }
+  78% { transform: translateY(-7px); opacity: 1; }
+  92% { transform: translateY(-12px); opacity: 0; }
+}
+
+.typist .k-1 { animation: spark-pop 1.3s linear infinite; }
+.typist .k-2 { animation: spark-pop 1.3s linear infinite 0.45s; }
+.typist .k-3 { animation: spark-pop 1.3s linear infinite 0.9s; }
+
+@keyframes notif-float {
+  0% { transform: translateY(8px); opacity: 0; }
+  18%, 72% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-10px); opacity: 0; }
+}
+
+.typist .n-1 { animation: notif-float 5s ease-in-out infinite; }
+.typist .n-2 { animation: notif-float 5s ease-in-out infinite 2.5s; }
+
+@keyframes lamp-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.typist .lamp-glow { animation: lamp-pulse 3.5s ease-in-out infinite; }
+
+@keyframes leaf-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2.5deg); }
+}
+
+.typist .leaf {
+  transform-origin: 182px 218px;
+  animation: leaf-sway 4s ease-in-out infinite;
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
