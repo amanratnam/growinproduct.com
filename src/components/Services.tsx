@@ -7,23 +7,23 @@ import SectionShell from "./SectionShell";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---------- mini visuals, one per service; each replays on hover ---------- */
+/* ---------- compact mini visuals, replay on hover ---------- */
 
 function StrategyVisual() {
   return (
-    <svg viewBox="0 0 200 90" className="h-24 w-full" aria-hidden>
+    <svg viewBox="0 0 200 64" className="h-full w-full" aria-hidden>
       <path
         className="draw-path strategy-path"
-        d="M10,75 C50,70 60,40 95,38 C130,36 140,18 185,12"
+        d="M10,52 C50,48 60,28 95,26 C130,24 140,12 185,8"
         fill="none"
         stroke="var(--accent)"
         strokeWidth="3"
         strokeLinecap="round"
       />
-      <circle cx="185" cy="12" r="5" fill="var(--accent)" />
-      <circle cx="185" cy="12" r="10" fill="var(--accent)" opacity="0.18" className="pulse-dot" />
-      <circle cx="10" cy="75" r="3.5" fill="var(--foreground)" opacity="0.5" />
-      <circle cx="95" cy="38" r="3.5" fill="var(--foreground)" opacity="0.5" />
+      <circle cx="185" cy="8" r="4" fill="var(--accent)" />
+      <circle cx="185" cy="8" r="8" fill="var(--accent)" opacity="0.18" className="pulse-dot" />
+      <circle cx="10" cy="52" r="3" fill="var(--foreground)" opacity="0.5" />
+      <circle cx="95" cy="26" r="3" fill="var(--foreground)" opacity="0.5" />
     </svg>
   );
 }
@@ -31,11 +31,11 @@ function StrategyVisual() {
 function AnalysisVisual() {
   const bars = [34, 52, 40, 66, 58, 82];
   return (
-    <div className="flex h-24 items-end justify-center gap-3" aria-hidden>
+    <div className="flex h-full items-end justify-center gap-2 pb-1" aria-hidden>
       {bars.map((h, i) => (
         <div
           key={i}
-          className={`bar-anim w-6 rounded-t-md ${i === bars.length - 1 ? "bg-accent" : "bg-foreground/[0.12]"}`}
+          className={`bar-anim w-4 rounded-t ${i === bars.length - 1 ? "bg-accent" : "bg-foreground/[0.12]"}`}
           style={{ height: `${h}%`, animationDelay: `${i * 90}ms` }}
         />
       ))}
@@ -44,17 +44,17 @@ function AnalysisVisual() {
 }
 
 function PrdVisual() {
-  const widths = ["w-11/12", "w-3/4", "w-5/6", "w-1/2", "w-2/3"];
+  const widths = ["w-11/12", "w-3/4", "w-1/2"];
   return (
-    <div className="flex h-24 flex-col justify-center gap-2.5 px-2" aria-hidden>
-      <div className="flex items-center gap-2">
-        <span className="h-3 w-3 rounded-sm bg-accent" />
-        <div className="doc-line h-2 w-1/3 rounded bg-foreground/30" style={{ animationDelay: "0ms" }} />
+    <div className="flex h-full flex-col justify-center gap-1.5 px-2" aria-hidden>
+      <div className="flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-[3px] bg-accent" />
+        <div className="doc-line h-1.5 w-1/3 rounded bg-foreground/30" style={{ animationDelay: "0ms" }} />
       </div>
       {widths.map((w, i) => (
         <div
           key={i}
-          className={`doc-line h-1.5 rounded bg-foreground/[0.1] ${w}`}
+          className={`doc-line h-1 rounded bg-foreground/[0.1] ${w}`}
           style={{ animationDelay: `${120 + i * 110}ms` }}
         />
       ))}
@@ -64,52 +64,52 @@ function PrdVisual() {
 
 function WorkflowVisual() {
   return (
-    <svg viewBox="0 0 220 90" className="h-24 w-full" aria-hidden>
-      <path className="flow-line" d="M38,45 H92" stroke="var(--foreground)" strokeOpacity="0.3" strokeWidth="2" fill="none" />
-      <path className="flow-line" d="M128,45 H182" stroke="var(--foreground)" strokeOpacity="0.3" strokeWidth="2" fill="none" />
-      <rect className="wf-node wf-node-1" x="10" y="30" width="30" height="30" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="2" />
-      <rect className="wf-node wf-node-2" x="95" y="30" width="30" height="30" rx="15" fill="white" stroke="var(--foreground)" strokeOpacity="0.4" strokeWidth="2" />
-      <rect className="wf-node wf-node-3" x="180" y="30" width="30" height="30" rx="8" fill="var(--foreground)" />
-      <path d="M190 45l4 4 7-8" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 220 64" className="h-full w-full" aria-hidden>
+      <path className="flow-line" d="M38,32 H92" stroke="var(--foreground)" strokeOpacity="0.3" strokeWidth="2" fill="none" />
+      <path className="flow-line" d="M128,32 H182" stroke="var(--foreground)" strokeOpacity="0.3" strokeWidth="2" fill="none" />
+      <rect className="wf-node wf-node-1" x="14" y="20" width="24" height="24" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="2" />
+      <rect className="wf-node wf-node-2" x="97" y="20" width="24" height="24" rx="12" fill="white" stroke="var(--foreground)" strokeOpacity="0.4" strokeWidth="2" />
+      <rect className="wf-node wf-node-3" x="180" y="20" width="24" height="24" rx="6" fill="var(--foreground)" />
+      <path d="M188 32l3 3 6-7" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function AiVisual() {
   return (
-    <svg viewBox="0 0 200 90" className="h-24 w-full" aria-hidden>
+    <svg viewBox="0 0 200 64" className="h-full w-full" aria-hidden>
       {[
-        [40, 25],
-        [40, 65],
-        [160, 25],
-        [160, 65],
+        [48, 16],
+        [48, 48],
+        [152, 16],
+        [152, 48],
       ].map(([x, y], i) => (
         <g key={i} className="ai-node" style={{ animationDelay: `${i * 0.3}s` }}>
-          <line x1={x} y1={y} x2="100" y2="45" stroke="var(--accent)" strokeOpacity="0.35" strokeWidth="1.5" />
-          <circle cx={x} cy={y} r="6" fill="var(--foreground)" opacity="0.15" />
-          <circle cx={x} cy={y} r="3" fill="var(--foreground)" opacity="0.5" />
+          <line x1={x} y1={y} x2="100" y2="32" stroke="var(--accent)" strokeOpacity="0.35" strokeWidth="1.5" />
+          <circle cx={x} cy={y} r="4.5" fill="var(--foreground)" opacity="0.15" />
+          <circle cx={x} cy={y} r="2.5" fill="var(--foreground)" opacity="0.5" />
         </g>
       ))}
-      <circle cx="100" cy="45" r="14" fill="var(--accent)" opacity="0.15" className="pulse-dot" />
-      <circle cx="100" cy="45" r="8" fill="var(--accent)" />
-      <path d="M97 45l2 2 4-4" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="100" cy="32" r="11" fill="var(--accent)" opacity="0.15" className="pulse-dot" />
+      <circle cx="100" cy="32" r="6.5" fill="var(--accent)" />
+      <path d="M97.5 32l2 2 3.5-4" stroke="white" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function LeadershipVisual() {
   return (
-    <div className="flex h-24 items-center justify-center" aria-hidden>
-      <div className="flex -space-x-3">
+    <div className="flex h-full items-center justify-center" aria-hidden>
+      <div className="flex -space-x-2">
         {["bg-foreground/20", "bg-foreground/35", "bg-accent", "bg-foreground/35", "bg-foreground/20"].map(
           (c, i) => (
             <div
               key={i}
-              className={`lead-avatar flex h-12 w-12 items-center justify-center rounded-full border-2 border-white ${c} ${i === 2 ? "z-10 scale-125 text-white" : ""}`}
+              className={`lead-avatar flex h-8 w-8 items-center justify-center rounded-full border-2 border-white ${c} ${i === 2 ? "z-10 scale-125 text-white" : ""}`}
               style={{ animationDelay: `${Math.abs(i - 2) * 0.12}s` }}
             >
               {i === 2 && (
-                <svg viewBox="0 0 16 16" className="h-5 w-5" fill="none">
+                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none">
                   <path d="M8 2l1.8 3.6L14 6.2l-3 2.9.7 4-3.7-1.9L4.3 13l.7-4-3-2.9 4.2-.6L8 2z" fill="currentColor" />
                 </svg>
               )}
@@ -124,39 +124,39 @@ function LeadershipVisual() {
 const services = [
   {
     title: "Product Strategy",
-    desc: "North-star definition, market positioning and roadmaps that connect vision to measurable outcomes.",
+    desc: "North-star definition, positioning and roadmaps that connect vision to outcomes.",
     visual: <StrategyVisual />,
-    anim: { x: -60, rotate: -3 },
+    anim: { x: -50, rotate: -3 },
   },
   {
     title: "Business Analysis",
     desc: "Requirements, data deep-dives and opportunity sizing that turn ambiguity into decisions.",
     visual: <AnalysisVisual />,
-    anim: { y: 80, scale: 0.9 },
+    anim: { y: 60, scale: 0.9 },
   },
   {
     title: "PRD & Documentation",
-    desc: "Crisp specs, user stories and acceptance criteria your engineers actually want to read.",
+    desc: "Crisp specs, user stories and acceptance criteria engineers actually want to read.",
     visual: <PrdVisual />,
-    anim: { x: 60, rotate: 3 },
+    anim: { x: 50, rotate: 3 },
   },
   {
     title: "Workflow Design",
-    desc: "Operational flows mapped, simplified and rebuilt — fewer handoffs, faster cycle time.",
+    desc: "Operational flows mapped, simplified and rebuilt, with fewer handoffs and faster cycles.",
     visual: <WorkflowVisual />,
-    anim: { y: 80, rotate: -2 },
+    anim: { y: 60, rotate: -2 },
   },
   {
     title: "AI & Automation",
     desc: "Practical AI integrations and automation pipelines that remove busywork, not jobs.",
     visual: <AiVisual />,
-    anim: { scale: 0.8, y: 40 },
+    anim: { scale: 0.8, y: 30 },
   },
   {
-    title: "Fractional Product Leadership",
-    desc: "Senior product leadership embedded in your team — at the stage you need, for as long as you need.",
+    title: "Fractional Leadership",
+    desc: "Senior product leadership embedded in your team, exactly as long as you need it.",
     visual: <LeadershipVisual />,
-    anim: { x: -60, y: 40 },
+    anim: { x: -50, y: 30 },
   },
 ];
 
@@ -166,7 +166,7 @@ export default function Services() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>(".service-card").forEach((card, i) => {
-        const from = services[i]?.anim ?? { y: 60 };
+        const from = services[i]?.anim ?? { y: 50 };
         gsap.fromTo(
           card,
           { ...from, opacity: 0 },
@@ -176,11 +176,11 @@ export default function Services() {
             rotate: 0,
             scale: 1,
             opacity: 1,
-            duration: 1,
+            duration: 0.9,
             ease: "power3.out",
             scrollTrigger: {
               trigger: card,
-              start: "top 85%",
+              start: "top 88%",
               onEnter: () => card.classList.add("in-view"),
             },
           }
@@ -194,9 +194,9 @@ export default function Services() {
             { strokeDasharray: len, strokeDashoffset: len },
             {
               strokeDashoffset: 0,
-              duration: 1.4,
+              duration: 1.2,
               ease: "power2.inOut",
-              scrollTrigger: { trigger: card, start: "top 80%" },
+              scrollTrigger: { trigger: card, start: "top 85%" },
             }
           );
         }
@@ -209,25 +209,21 @@ export default function Services() {
     <SectionShell
       id="services"
       eyebrow="What I do"
-      title={
-        <>
-          Every layer of the product, handled.
-        </>
-      }
-      blurb="Six disciplines, one operator. Strategy through shipping — without the agency overhead. Hover a card to see it work."
+      title="Every layer of the product, handled."
+      blurb="Six disciplines, one operator. Strategy through shipping, without the agency overhead. Hover a card to see it work."
     >
-      <div ref={gridRef} className="grid gap-6 sm:grid-cols-2">
+      <div ref={gridRef} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {services.map((s, i) => (
-          <article key={s.title} className="service-card panel group flex flex-col p-7 will-change-transform">
-            <div className="rounded-xl bg-foreground/[0.025] transition-colors duration-300 group-hover:bg-accent-soft/60">
+          <article key={s.title} className="service-card panel group flex flex-col p-4 will-change-transform">
+            <div className="h-16 shrink-0 rounded-lg bg-foreground/[0.025] transition-colors duration-300 group-hover:bg-accent-soft/60">
               {s.visual}
             </div>
-            <div className="mt-6 flex items-start justify-between gap-4">
-              <h3 className="text-xl font-semibold tracking-tight">{s.title}</h3>
-              <span className="font-mono text-xs text-muted/60">0{i + 1}</span>
+            <div className="mt-3 flex items-start justify-between gap-2">
+              <h3 className="text-sm font-semibold tracking-tight">{s.title}</h3>
+              <span className="font-mono text-[10px] text-muted/60">0{i + 1}</span>
             </div>
-            <p className="mt-2.5 text-sm leading-relaxed text-muted">{s.desc}</p>
-            <span className="mt-5 h-px w-8 bg-accent transition-all duration-500 group-hover:w-full" />
+            <p className="mt-1.5 text-xs leading-relaxed text-muted">{s.desc}</p>
+            <span className="mt-3 h-px w-6 bg-accent transition-all duration-500 group-hover:w-full" />
           </article>
         ))}
       </div>

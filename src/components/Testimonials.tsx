@@ -1,12 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionShell from "./SectionShell";
+import { CrosshairIcon, DocIcon, BoltIcon, ChipIcon, SproutIcon } from "./Icons";
 
-const testimonials = [
+const testimonials: {
+  icon: ReactNode;
+  title: string;
+  quote: string;
+  name: string;
+  role: string;
+}[] = [
   {
-    emoji: "🎯",
+    icon: <CrosshairIcon className="h-6 w-6" />,
     title: "The Roadmap Rescue",
     quote:
       "He walked into a roadmap that was 80 items long and walked out with the 6 that mattered. Activation doubled in a quarter.",
@@ -14,7 +21,7 @@ const testimonials = [
     role: "CEO, B2B Analytics Startup",
   },
   {
-    emoji: "📜",
+    icon: <DocIcon className="h-6 w-6" />,
     title: "Specs That Spoke",
     quote:
       "The PRDs were so clear our engineers stopped scheduling clarification meetings. That alone paid for the engagement.",
@@ -22,7 +29,7 @@ const testimonials = [
     role: "VP Engineering, Healthcare SaaS",
   },
   {
-    emoji: "⚡",
+    icon: <BoltIcon className="h-6 w-6" />,
     title: "The 31-Hour Heist",
     quote:
       "We thought we needed more headcount. Turns out we needed our workflow redesigned. 31 hours a week back, immediately.",
@@ -30,7 +37,7 @@ const testimonials = [
     role: "COO, Logistics Platform",
   },
   {
-    emoji: "🤖",
+    icon: <ChipIcon className="h-6 w-6" />,
     title: "Six Weeks To Live",
     quote:
       "Rare mix: thinks like a strategist, writes like an engineer, ships like a founder. Our AI triage went live in six weeks.",
@@ -38,10 +45,10 @@ const testimonials = [
     role: "Head of Support, SaaS Scale-up",
   },
   {
-    emoji: "🌱",
+    icon: <SproutIcon className="h-6 w-6" />,
     title: "A System, Not A Dependency",
     quote:
-      "As a fractional product lead he ran discovery, leveled up two junior PMs and left us a system — not a dependency.",
+      "As a fractional product lead he ran discovery, leveled up two junior PMs and left us a system, not a dependency.",
     name: "Elena V.",
     role: "Founder, HealthTech",
   },
@@ -54,7 +61,6 @@ export default function Testimonials() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pausedRef = useRef(false);
-  const reducedRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -73,12 +79,11 @@ export default function Testimonials() {
     [clearTimers]
   );
 
-  // type the active quote character by character
   useEffect(() => {
-    reducedRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const quote = testimonials[index].quote;
 
-    if (reducedRef.current) {
+    if (reduced) {
       setTyped(quote);
       setDone(true);
       return;
@@ -92,7 +97,6 @@ export default function Testimonials() {
         if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = null;
         setDone(true);
-        // hold the finished card, then advance
         advanceRef.current = setTimeout(() => {
           if (!pausedRef.current) goTo(index + 1);
         }, 3500);
@@ -109,7 +113,7 @@ export default function Testimonials() {
       id="praise"
       eyebrow="Word of mouth"
       title="People keep saying nice things."
-      blurb="Live from the inbox — every quote typed out the way it arrived."
+      blurb="Live from the inbox, every quote typed out the way it arrived."
       tone="tint"
     >
       <div
@@ -136,10 +140,10 @@ export default function Testimonials() {
                   initial={{ scale: 0, rotate: -30 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 320, damping: 14, delay: 0.15 }}
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-2xl shadow-[inset_0_0_0_2px_rgba(16,185,129,0.25)]"
+                  className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-accent-dark shadow-[inset_0_0_0_2px_rgba(16,185,129,0.25)]"
                   aria-hidden
                 >
-                  {t.emoji}
+                  {t.icon}
                 </motion.span>
                 <div>
                   <p className="text-lg font-bold tracking-tight">{t.title}</p>
@@ -175,7 +179,6 @@ export default function Testimonials() {
           </AnimatePresence>
         </div>
 
-        {/* carousel controls */}
         <div className="mt-6 flex items-center justify-between">
           <div className="flex gap-2">
             {testimonials.map((item, i) => (
@@ -183,13 +186,13 @@ export default function Testimonials() {
                 key={item.title}
                 onClick={() => goTo(i)}
                 aria-label={`Show testimonial: ${item.title}`}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl border text-base transition-all duration-300 ${
+                className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 ${
                   i === index
-                    ? "border-accent bg-accent-soft shadow-[0_0_16px_rgba(16,185,129,0.25)]"
-                    : "border-line bg-white opacity-50 grayscale hover:opacity-100 hover:grayscale-0"
+                    ? "border-accent bg-accent-soft text-accent-dark shadow-[0_0_16px_rgba(16,185,129,0.25)]"
+                    : "border-line bg-white text-foreground/35 hover:text-accent-dark"
                 }`}
               >
-                {item.emoji}
+                <span className="[&>svg]:h-4 [&>svg]:w-4">{item.icon}</span>
               </button>
             ))}
           </div>

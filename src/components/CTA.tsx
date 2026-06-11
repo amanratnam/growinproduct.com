@@ -121,7 +121,7 @@ export default function CTA() {
         </h2>
 
         <p className="cta-after mx-auto mt-8 max-w-lg text-lg leading-relaxed text-white/60">
-          One conversation. No deck, no discovery-call theater — just your
+          One conversation. No deck, no discovery-call theater, just your
           product problem and a straight answer on whether I can help.
         </p>
 
