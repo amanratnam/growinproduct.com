@@ -60,7 +60,7 @@ function TypistScene() {
         <rect x="168" y="216" width="28" height="16" rx="3" fill="rgba(255,255,255,0.7)" />
       </g>
 
-      {/* person — seated, typing */}
+      {/* person, seated, typing */}
       <g>
         {/* chair */}
         <rect x="218" y="170" width="14" height="92" rx="6" fill="rgba(255,255,255,0.28)" />
@@ -78,7 +78,7 @@ function TypistScene() {
           {/* eye, blinking */}
           <circle className="eye" cx="290" cy="128" r="2.2" fill="#0a0a0a" />
         </g>
-        {/* arms typing — alternating taps */}
+        {/* arms typing, alternating taps */}
         <g className="arm arm-l">
           <path d="M260 172 q16 22 44 32 l6 -8 q-24 -12 -38 -30 z" fill="#0c8c66" />
           <circle cx="308" cy="200" r="6" fill="#f4d7c0" />

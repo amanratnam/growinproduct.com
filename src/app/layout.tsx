@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
+import TopNav from "@/components/TopNav";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +16,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grow In Product — Product Management & Technology Consulting",
+  title: {
+    default: "Grow In Product, Product Management & Technology Consulting",
+    template: "%s · Grow In Product",
+  },
   description:
     "Product strategy, business analysis, AI & automation, and fractional product leadership. Ship products that grow.",
   openGraph: {
@@ -34,7 +40,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SmoothScroll>
+          <TopNav />
+          {children}
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );
