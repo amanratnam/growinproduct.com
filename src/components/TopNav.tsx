@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { navItems } from "./nav";
@@ -40,10 +41,15 @@ export default function TopNav() {
           className="fixed inset-x-0 top-0 z-50 border-b border-foreground/[0.06] bg-white/55 backdrop-blur-2xl"
         >
           <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
-            <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground text-xs font-bold text-white">
-                G
-              </span>
+            <Link href="/" aria-label="Grow In Product, home" className="group flex items-center gap-2.5 font-semibold tracking-tight">
+              <Image
+                src="/logo-mark.png"
+                alt=""
+                width={32}
+                height={32}
+                priority
+                className="h-8 w-8 transition-transform duration-300 group-hover:scale-105"
+              />
               <span className="hidden sm:inline">
                 Grow In Product<span className="text-accent">.</span>
               </span>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -87,6 +88,14 @@ export default function Hero() {
 
       <div className="hero-inner relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-6 py-24 lg:grid-cols-[1.15fr_0.85fr] lg:px-12">
         <div>
+          <Image
+            src="/logo-mark.png"
+            alt="Grow In Product"
+            width={64}
+            height={64}
+            priority
+            className="hero-meta mb-6 h-14 w-14 brightness-0 invert drop-shadow-[0_0_20px_rgba(16,185,129,0.5)] sm:h-16 sm:w-16"
+          />
           <p className="hero-meta font-mono text-[11px] uppercase tracking-[0.45em] text-accent/80">
             Product Management &amp; Technology Consulting
           </p>

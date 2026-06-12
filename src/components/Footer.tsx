@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
+
 function TypistScene() {
   /* flat-vector workspace: a person typing away, screen filling with work */
   return (
@@ -125,20 +128,27 @@ export default function Footer() {
           shipping product, one keystroke at a time
         </p>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
-          <p className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white text-[10px] font-bold text-foreground">
-              G
+        <div className="mt-12 flex flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 sm:flex-row">
+          <Link href="/" aria-label="Grow In Product, home" className="flex items-center gap-2.5">
+            <Image
+              src="/logo-mark.png"
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7 brightness-0 invert"
+            />
+            <span className="text-sm font-semibold tracking-tight">
+              Grow In Product<span className="text-accent">.</span>
             </span>
-            Grow In Product<span className="text-accent">.</span>
-          </p>
+          </Link>
           <p className="text-xs text-white/40">
             © {new Date().getFullYear()} Grow In Product. Product management &amp; technology consulting.
           </p>
           <div className="flex gap-6 text-xs text-white/50">
-            <a href="#services" className="transition-colors hover:text-white">Services</a>
-            <a href="#work" className="transition-colors hover:text-white">Work</a>
-            <a href="#contact" className="transition-colors hover:text-white">Contact</a>
+            <Link href="/#services" className="transition-colors hover:text-white">Services</Link>
+            <Link href="/projects" className="transition-colors hover:text-white">Work</Link>
+            <Link href="/process" className="transition-colors hover:text-white">Process</Link>
+            <Link href="/contact" className="transition-colors hover:text-white">Contact</Link>
           </div>
         </div>
       </div>

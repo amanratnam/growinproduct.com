@@ -27,6 +27,11 @@ export const metadata: Metadata = {
     description:
       "Product strategy, business analysis, AI & automation, and fractional product leadership.",
     type: "website",
+    images: [{ url: "/logo-full.png", width: 612, height: 408, alt: "Grow In Product" }],
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
   },
 };
 
