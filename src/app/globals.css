@@ -143,6 +143,44 @@ body {
   will-change: transform;
 }
 
+/* ---------- testimonial wall (horizontal marquee rows) ---------- */
+@keyframes tm-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.tm-row {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+.tm-track {
+  display: flex;
+  width: max-content;
+  animation: tm-scroll var(--tm-dur, 60s) linear infinite;
+  animation-direction: var(--tm-dir, normal);
+  will-change: transform;
+}
+
+.tm-row:hover .tm-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-row {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tm-track {
+    animation: none;
+  }
+  .tm-clone {
+    display: none;
+  }
+}
+
 /* ---------- bars ---------- */
 @keyframes bar-grow {
   from { transform: scaleY(0.15); }
