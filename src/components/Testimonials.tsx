@@ -1,222 +1,183 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { type ReactNode } from "react";
 import SectionShell from "./SectionShell";
-import { CrosshairIcon, DocIcon, BoltIcon, ChipIcon, SproutIcon } from "./Icons";
+import { CrosshairIcon, ChartUpIcon, DocIcon } from "./Icons";
 
-const testimonials: {
-  icon: ReactNode;
-  title: string;
-  quote: string;
-  name: string;
-  role: string;
-}[] = [
+type Category = "interview" | "strategy" | "articles";
+
+const categories: Record<Category, { label: string; icon: ReactNode }> = {
+  interview: { label: "Interview Prep", icon: <CrosshairIcon className="h-3.5 w-3.5" /> },
+  strategy: { label: "Product Strategy & Roadmapping", icon: <ChartUpIcon className="h-3.5 w-3.5" /> },
+  articles: { label: "Educational Articles", icon: <DocIcon className="h-3.5 w-3.5" /> },
+};
+
+type Review = { quote: string; time: string; cat: Category };
+
+/* Real client feedback, names withheld. Time is when the review was left. */
+const reviews: Review[] = [
   {
-    icon: <CrosshairIcon className="h-6 w-6" />,
-    title: "The Roadmap Rescue",
     quote:
-      "He walked into a roadmap that was 80 items long and walked out with the 6 that mattered. Activation doubled in a quarter.",
-    name: "Sarah K.",
-    role: "CEO, B2B Analytics Startup",
+      "Aman was great, I would highly recommend having mock interviews with him. Very understanding even when our schedules weren't aligning. I definitely learned some things from our mock interview and he was even willing to mock a case study if I wanted to.",
+    time: "3 months ago",
+    cat: "interview",
+  },
+  { quote: "Extremely knowledgeable.", time: "1 year ago", cat: "interview" },
+  {
+    quote: "I got actionable feedback on how to improve an interview use case presentation.",
+    time: "1 year ago",
+    cat: "interview",
+  },
+  { quote: "Great work!!", time: "1 year ago", cat: "strategy" },
+  {
+    quote:
+      "After sending me a document reviewing an interview, he answered all my questions in detail and provided materials to help me develop the areas where I can improve. Overall I recommend him for providing feedback on your interviews.",
+    time: "1 year ago",
+    cat: "interview",
+  },
+  { quote: "An exceptional service was delivered.", time: "2 years ago", cat: "interview" },
+  {
+    quote:
+      "I collaborated with Aman on a few side projects. He is professional and will always go the extra mile for you. Will definitely hire again, thanks Aman!",
+    time: "2 years ago",
+    cat: "articles",
   },
   {
-    icon: <DocIcon className="h-6 w-6" />,
-    title: "Specs That Spoke",
     quote:
-      "The PRDs were so clear our engineers stopped scheduling clarification meetings. That alone paid for the engagement.",
-    name: "Daniel M.",
-    role: "VP Engineering, Healthcare SaaS",
+      "I enjoyed working with Aman so much that I signed up for two additional coaching sessions to get even more practice answering Product Management interview questions. I highly recommend his services to anyone looking to ace their upcoming PM interviews.",
+    time: "2 years ago",
+    cat: "interview",
   },
   {
-    icon: <BoltIcon className="h-6 w-6" />,
-    title: "The 31-Hour Heist",
     quote:
-      "We thought we needed more headcount. Turns out we needed our workflow redesigned. 31 hours a week back, immediately.",
-    name: "Priya R.",
-    role: "COO, Logistics Platform",
+      "Aman was incredible to work with! A Product Management expert who demonstrated his knowledge during our 1:1 mock interview and coaching sessions. I went in with no idea how to answer RCA and product design questions, and by our last session I felt like a pro.",
+    time: "2 years ago",
+    cat: "interview",
+  },
+  { quote: "Great work.", time: "3 years ago", cat: "strategy" },
+  {
+    quote:
+      "Excellent quality and efficient work as always. I've ordered from him multiple times at this point, and he never disappoints. It's always above and beyond. I'd highly recommend him for any product management assistance.",
+    time: "3 years ago",
+    cat: "strategy",
   },
   {
-    icon: <ChipIcon className="h-6 w-6" />,
-    title: "Six Weeks To Live",
     quote:
-      "Rare mix: thinks like a strategist, writes like an engineer, ships like a founder. Our AI triage went live in six weeks.",
-    name: "Tom W.",
-    role: "Head of Support, SaaS Scale-up",
+      "Great work as always! Incredibly detailed, and gave me a lot to work off of to tailor it how I want. I really appreciate the assistance on product related tasks and would recommend him to anyone looking for interview case study guidance!",
+    time: "4 years ago",
+    cat: "strategy",
+  },
+  { quote: "Excellent work and delivery.", time: "4 years ago", cat: "strategy" },
+  {
+    quote:
+      "Great seller! Answered any and all inquiries I had and displayed a wealth of knowledge. I gained valuable insight on product management concepts.",
+    time: "4 years ago",
+    cat: "interview",
   },
   {
-    icon: <SproutIcon className="h-6 w-6" />,
-    title: "A System, Not A Dependency",
     quote:
-      "As a fractional product lead he ran discovery, leveled up two junior PMs and left us a system, not a dependency.",
-    name: "Elena V.",
-    role: "Founder, HealthTech",
+      "Aman is an expert product engineer with a keen eye for detail and truly understands how to bring a product to life. He has helped with our GTM strategy and plan and will continue to help until we launch. Thanks!",
+    time: "4 years ago",
+    cat: "strategy",
   },
+  { quote: "Really good to work with. I definitely recommend Aman.", time: "4 years ago", cat: "interview" },
 ];
 
-export default function Testimonials() {
-  const [index, setIndex] = useState(0);
-  const [typed, setTyped] = useState("");
-  const [done, setDone] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const advanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pausedRef = useRef(false);
-
-  const clearTimers = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (advanceRef.current) clearTimeout(advanceRef.current);
-    timerRef.current = null;
-    advanceRef.current = null;
-  }, []);
-
-  const goTo = useCallback(
-    (i: number) => {
-      clearTimers();
-      setIndex(((i % testimonials.length) + testimonials.length) % testimonials.length);
-      setTyped("");
-      setDone(false);
-    },
-    [clearTimers]
+function Stars() {
+  return (
+    <span className="flex gap-0.5 text-accent" aria-label="5 out of 5 stars">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg key={i} viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="currentColor" aria-hidden>
+          <path d="M8 2l1.8 3.6L14 6.2l-3 2.9.7 4-3.7-1.9L4.3 13l.7-4-3-2.9 4.2-.6L8 2z" />
+        </svg>
+      ))}
+    </span>
   );
+}
 
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const quote = testimonials[index].quote;
+function Card({ r, clone = false }: { r: Review; clone?: boolean }) {
+  const c = categories[r.cat];
+  return (
+    <figure
+      aria-hidden={clone}
+      className={`panel mr-4 flex h-full w-[80vw] max-w-[340px] shrink-0 flex-col p-5 sm:w-[360px] sm:p-6 ${clone ? "tm-clone" : ""}`}
+    >
+      <div className="flex items-center justify-between">
+        <Stars />
+        <span className="font-mono text-[10px] uppercase tracking-wider text-muted/70">{r.time}</span>
+      </div>
+      <blockquote className="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/85">
+        <span className="mr-0.5 font-serif text-lg leading-none text-accent/50">“</span>
+        {r.quote}
+      </blockquote>
+      <figcaption className="mt-5 flex items-center gap-1.5 border-t border-line pt-4 text-[11px] font-medium text-accent-dark">
+        {c.icon}
+        <span className="tracking-wide">{c.label}</span>
+      </figcaption>
+    </figure>
+  );
+}
 
-    if (reduced) {
-      setTyped(quote);
-      setDone(true);
-      return;
-    }
+function Row({
+  items,
+  dur,
+  reverse = false,
+}: {
+  items: Review[];
+  dur: number;
+  reverse?: boolean;
+}) {
+  return (
+    <div className="tm-row">
+      <div
+        className="tm-track"
+        style={
+          {
+            "--tm-dur": `${dur}s`,
+            "--tm-dir": reverse ? "reverse" : "normal",
+          } as React.CSSProperties
+        }
+      >
+        {items.map((r, i) => (
+          <Card key={`a-${i}`} r={r} />
+        ))}
+        {/* seamless-loop clones, hidden from AT and in reduced-motion */}
+        {items.map((r, i) => (
+          <Card key={`b-${i}`} r={r} clone />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-    let pos = 0;
-    timerRef.current = setInterval(() => {
-      pos += 1;
-      setTyped(quote.slice(0, pos));
-      if (pos >= quote.length) {
-        if (timerRef.current) clearInterval(timerRef.current);
-        timerRef.current = null;
-        setDone(true);
-        advanceRef.current = setTimeout(() => {
-          if (!pausedRef.current) goTo(index + 1);
-        }, 3500);
-      }
-    }, 22);
-
-    return clearTimers;
-  }, [index, goTo, clearTimers]);
-
-  const t = testimonials[index];
+export default function Testimonials() {
+  const mid = Math.ceil(reviews.length / 2);
+  const rowA = reviews.slice(0, mid);
+  const rowB = reviews.slice(mid);
 
   return (
     <SectionShell
       id="praise"
       eyebrow="Word of mouth"
       title="People keep saying nice things."
-      blurb="Live from the inbox, every quote typed out the way it arrived."
+      blurb="A wall of five-star reviews from real engagements, spanning mock interviews, product strategy and hands-on delivery."
       tone="tint"
     >
-      <div
-        onMouseEnter={() => (pausedRef.current = true)}
-        onMouseLeave={() => {
-          pausedRef.current = false;
-          if (done && !advanceRef.current) {
-            advanceRef.current = setTimeout(() => goTo(index + 1), 2000);
-          }
-        }}
-      >
-        <div className="relative min-h-[340px] sm:min-h-[300px]">
-          <AnimatePresence mode="wait">
-            <motion.figure
-              key={index}
-              initial={{ opacity: 0, y: 40, rotate: -1.5 }}
-              animate={{ opacity: 1, y: 0, rotate: 0 }}
-              exit={{ opacity: 0, y: -30, rotate: 1.5 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-3xl border border-line bg-white p-8 shadow-[0_24px_60px_-24px_rgba(10,10,10,0.12)] sm:p-10"
-            >
-              <div className="flex items-center gap-4">
-                <motion.span
-                  initial={{ scale: 0, rotate: -30 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: "spring", stiffness: 320, damping: 14, delay: 0.15 }}
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-accent-dark shadow-[inset_0_0_0_2px_rgba(16,185,129,0.25)]"
-                  aria-hidden
-                >
-                  {t.icon}
-                </motion.span>
-                <div>
-                  <p className="text-lg font-bold tracking-tight">{t.title}</p>
-                  <p className="font-mono text-[11px] uppercase tracking-wider text-accent-dark">
-                    incoming transmission…
-                  </p>
-                </div>
-              </div>
-
-              <blockquote className="mt-6 min-h-[110px] text-lg leading-relaxed text-foreground/85 sm:text-xl">
-                <span className="font-medium">{typed}</span>
-                <span
-                  className={`ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] bg-accent ${done ? "animate-pulse" : ""}`}
-                  aria-hidden
-                />
-              </blockquote>
-
-              <motion.figcaption
-                initial={false}
-                animate={{ opacity: done ? 1 : 0.25 }}
-                transition={{ duration: 0.4 }}
-                className="mt-6 flex items-center justify-between border-t border-line pt-5"
-              >
-                <div>
-                  <p className="text-sm font-semibold">{t.name}</p>
-                  <p className="text-xs text-muted">{t.role}</p>
-                </div>
-                <span className="font-mono text-xs text-muted/60">
-                  {index + 1} / {testimonials.length}
-                </span>
-              </motion.figcaption>
-            </motion.figure>
-          </AnimatePresence>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <Stars />
+          <span className="text-sm font-semibold">5.0 average</span>
+          <span className="text-sm text-muted">· every review, five stars</span>
         </div>
 
-        <div className="mt-6 flex items-center justify-between">
-          <div className="flex gap-2">
-            {testimonials.map((item, i) => (
-              <button
-                key={item.title}
-                onClick={() => goTo(i)}
-                aria-label={`Show testimonial: ${item.title}`}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 ${
-                  i === index
-                    ? "border-accent bg-accent-soft text-accent-dark shadow-[0_0_16px_rgba(16,185,129,0.25)]"
-                    : "border-line bg-white text-foreground/35 hover:text-accent-dark"
-                }`}
-              >
-                <span className="[&>svg]:h-4 [&>svg]:w-4">{item.icon}</span>
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.85 }}
-              onClick={() => goTo(index - 1)}
-              aria-label="Previous testimonial"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white transition-colors hover:border-accent hover:text-accent-dark"
-            >
-              ←
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.85 }}
-              onClick={() => goTo(index + 1)}
-              aria-label="Next testimonial"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white transition-colors hover:border-accent hover:text-accent-dark"
-            >
-              →
-            </motion.button>
-          </div>
+        <div className="mt-2 space-y-4">
+          <Row items={rowA} dur={68} />
+          <Row items={rowB} dur={84} reverse />
         </div>
+
+        <p className="mt-1 text-xs text-muted/70">
+          Hover to pause. Names withheld for privacy.
+        </p>
       </div>
     </SectionShell>
   );
