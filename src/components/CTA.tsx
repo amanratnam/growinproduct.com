@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -126,20 +127,26 @@ export default function CTA() {
         </p>
 
         <div className="cta-after mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
+          <Link
             ref={btnRef}
-            href="mailto:hello@growinproduct.com"
+            href="/contact"
             className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-accent px-10 py-5 text-base font-semibold text-white shadow-[0_20px_60px_-15px_rgba(16,185,129,0.6)] transition-shadow hover:shadow-[0_25px_70px_-12px_rgba(16,185,129,0.8)]"
           >
-            <span className="relative z-10">hello@growinproduct.com</span>
+            <span className="relative z-10">Start a project</span>
             <svg viewBox="0 0 16 16" className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" aria-hidden>
               <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className="absolute inset-0 -translate-x-full bg-accent-dark transition-transform duration-500 ease-out group-hover:translate-x-0" />
-          </a>
+          </Link>
         </div>
 
-        <p className="cta-after mt-10 text-sm text-white/40">
+        <p className="cta-after mt-8 text-sm text-white/40">
+          Prefer email?{" "}
+          <a href="mailto:hello@growinproduct.com" className="text-white/70 underline decoration-white/20 underline-offset-4 transition-colors hover:text-accent">
+            hello@growinproduct.com
+          </a>
+        </p>
+        <p className="cta-after mt-3 text-sm text-white/40">
           Currently taking on 2 engagements for Q3 2026.
         </p>
       </div>

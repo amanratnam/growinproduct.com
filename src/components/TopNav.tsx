@@ -57,9 +57,8 @@ export default function TopNav() {
 
             <div className="hidden items-center gap-1 md:flex">
               {navItems.map((item) => {
-                const active =
-                  item.href === pathname ||
-                  (item.href.startsWith("/#") && isHome === false && false);
+                // highlight the item whose dedicated page we're on
+                const active = item.href === pathname;
                 return (
                   <Link
                     key={item.href}
