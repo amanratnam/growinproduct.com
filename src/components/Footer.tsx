@@ -123,7 +123,21 @@ export default function Footer() {
   return (
     <footer className="overflow-hidden border-t border-white/10 bg-foreground pb-10 pt-16 text-white">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
-        <TypistScene />
+        {/* the workshop frame; the scene pops out over its top edge */}
+        <div className="relative mx-auto max-w-2xl">
+          <div
+            className="absolute inset-x-2 bottom-1 top-[42%] rounded-3xl border border-white/10 bg-white/[0.03] shadow-[0_0_60px_rgba(16,185,129,0.07)_inset] sm:inset-x-6"
+            aria-hidden
+          >
+            <span className="absolute bottom-3 right-4 hidden items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.3em] text-white/30 sm:flex">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+              live · the workshop
+            </span>
+          </div>
+          <div className="relative z-10">
+            <TypistScene />
+          </div>
+        </div>
         <p className="mt-6 text-center font-mono text-xs uppercase tracking-[0.3em] text-white/40">
           shipping product, one keystroke at a time
         </p>
