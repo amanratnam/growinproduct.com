@@ -56,7 +56,9 @@ export default function TopNav() {
             </Link>
 
             <div className="hidden items-center gap-1 md:flex">
-              {navItems.map((item) => {
+              {navItems
+                .filter((item) => item.href !== "/contact")
+                .map((item) => {
                 // highlight the item whose dedicated page we're on
                 const active = item.href === pathname;
                 return (
@@ -105,22 +107,33 @@ export default function TopNav() {
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden border-t border-foreground/[0.06] bg-white/85 backdrop-blur-2xl md:hidden"
               >
-                <ul className="px-4 py-3">
-                  {navItems.map((item, idx) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setOpen(false)}
-                        className="flex w-full items-center gap-3 rounded-lg px-3 py-3 font-medium transition-colors hover:bg-accent-soft"
-                      >
-                        <span className="font-mono text-xs text-muted/60">0{idx + 1}</span>
-                        {item.label}
-                        <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-accent-dark/70">
-                          {item.tag}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
+                <ul className="px-4 pb-4 pt-3">
+                  {navItems
+                    .filter((item) => item.href !== "/contact")
+                    .map((item, idx) => (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className="flex w-full items-center gap-3 rounded-lg px-3 py-3 font-medium transition-colors hover:bg-accent-soft"
+                        >
+                          <span className="font-mono text-xs text-muted/60">0{idx + 1}</span>
+                          {item.label}
+                          <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-accent-dark/70">
+                            {item.tag}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  <li className="mt-2 px-1">
+                    <Link
+                      href="/contact"
+                      onClick={() => setOpen(false)}
+                      className="block rounded-full bg-foreground px-5 py-3 text-center text-sm font-medium text-white"
+                    >
+                      Let&apos;s talk
+                    </Link>
+                  </li>
                 </ul>
               </motion.div>
             )}

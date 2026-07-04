@@ -435,6 +435,38 @@ body {
   animation: leaf-sway 4s ease-in-out infinite;
 }
 
+/* ---------- invitation page ---------- */
+@keyframes confetti-drift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-16px) rotate(14deg); }
+}
+
+.confetti-bit {
+  animation: confetti-drift var(--dur, 6s) ease-in-out var(--delay, 0s) infinite;
+  will-change: transform;
+}
+
+@keyframes greet-wave {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(-24deg); }
+  55% { transform: rotate(-6deg); }
+  75% { transform: rotate(-22deg); }
+}
+
+.greet-arm {
+  transform-origin: 62px 74px;
+  animation: greet-wave 2.6s ease-in-out infinite;
+}
+
+@keyframes greet-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.greeter {
+  animation: greet-bob 3.2s ease-in-out infinite;
+}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

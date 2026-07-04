@@ -9,10 +9,117 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence } from "framer-motion";
 import type Lenis from "lenis";
 import { navItems } from "./nav";
+import {
+  RadarIcon,
+  VectorPenIcon,
+  RocketIcon,
+  ChartUpIcon,
+  DocIcon,
+  ChipIcon,
+  FlagIcon,
+} from "./Icons";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false });
+
+function Stars({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <span className="flex gap-1 text-accent" aria-hidden>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg key={i} viewBox="0 0 16 16" className={className} fill="currentColor">
+          <path d="M8 2l1.8 3.6L14 6.2l-3 2.9.7 4-3.7-1.9L4.3 13l.7-4-3-2.9 4.2-.6L8 2z" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+/* contextual scan-preview for each destination, real content, not filler */
+function PreviewBody({ label }: { label: string }) {
+  switch (label) {
+    case "Services":
+      return (
+        <div className="grid grid-cols-3 gap-2.5">
+          {[
+            [<ChartUpIcon key="s" className="h-4 w-4" />, "Strategy"],
+            [<RadarIcon key="a" className="h-4 w-4" />, "Analysis"],
+            [<DocIcon key="p" className="h-4 w-4" />, "PRDs"],
+            [<VectorPenIcon key="w" className="h-4 w-4" />, "Workflows"],
+            [<ChipIcon key="ai" className="h-4 w-4" />, "AI & Auto"],
+            [<FlagIcon key="l" className="h-4 w-4" />, "Leadership"],
+          ].map(([icon, name]) => (
+            <div key={name as string} className="flex flex-col items-center gap-1.5 border border-white/[0.07] bg-white/[0.03] px-1 py-2.5 text-accent">
+              {icon}
+              <span className="text-[9px] font-medium tracking-wide text-white/60">{name}</span>
+            </div>
+          ))}
+        </div>
+      );
+    case "Process":
+      return (
+        <div className="flex flex-wrap items-center gap-y-2">
+          {["Discover", "Define", "Design", "Deliver", "Scale"].map((s, i) => (
+            <span key={s} className="flex items-center">
+              <span className="border border-accent/40 bg-accent/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent">
+                {s}
+              </span>
+              {i < 4 && <span className="px-1 text-accent/50">▸</span>}
+            </span>
+          ))}
+        </div>
+      );
+    case "Work":
+      return (
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            ["−62%", "intake time"],
+            ["2.3×", "activation"],
+            ["78%", "auto-resolved"],
+          ].map(([v, l]) => (
+            <div key={l}>
+              <p className="text-xl font-bold text-white">{v}</p>
+              <p className="mt-0.5 text-[9px] uppercase tracking-wider text-white/40">{l}</p>
+            </div>
+          ))}
+        </div>
+      );
+    case "About":
+      return (
+        <div className="flex flex-wrap gap-2">
+          {["Product Manager", "Business Analyst", "AI Builder", "10+ yrs shipping"].map((c) => (
+            <span key={c} className="border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/70">
+              {c}
+            </span>
+          ))}
+        </div>
+      );
+    case "Praise":
+      return (
+        <div className="flex items-center gap-3">
+          <Stars />
+          <p className="text-sm text-white/70">
+            <span className="font-bold text-white">5.0</span> across 16 reviews
+          </p>
+        </div>
+      );
+    case "Contact":
+      return (
+        <div className="space-y-1.5 text-sm text-white/70">
+          <p className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+            2 seats open for Q3 2026
+          </p>
+          <p className="flex items-center gap-2">
+            <RocketIcon className="h-3.5 w-3.5 text-accent" />
+            Replies same day, from a human
+          </p>
+        </div>
+      );
+    default:
+      return null;
+  }
+}
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -74,6 +181,7 @@ export default function Hero() {
   };
 
   const preview = hovered !== null ? navItems[hovered] : null;
+  const hue = preview?.hue ?? 0;
 
   return (
     <section
@@ -81,8 +189,27 @@ export default function Hero() {
       id="top"
       className="relative flex min-h-screen items-center overflow-hidden bg-[#050807] text-white"
     >
-      <Hero3D />
-      {/* vignette + scanlines over the 3D layer */}
+      {/* 3D layer, tinted by the hovered destination */}
+      <div
+        className="absolute inset-0 transition-[filter] duration-700 ease-out"
+        style={{ filter: `hue-rotate(${hue}deg)` }}
+      >
+        <Hero3D />
+      </div>
+
+      {/* destination glow that drifts toward the hovered item's side */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute h-[80vmax] w-[80vmax] rounded-full"
+        animate={{
+          background: `radial-gradient(circle, hsla(${160 + hue}, 75%, 45%, ${hovered !== null ? 0.16 : 0.07}) 0%, transparent 60%)`,
+          x: hovered !== null ? (hovered % 2 === 0 ? "-12%" : "6%") : "-4%",
+          y: hovered !== null ? `${-20 + hovered * 7}%` : "-10%",
+        }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        style={{ left: "10%", top: "-10%" }}
+      />
+
       <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden />
       <div className="hero-scanlines pointer-events-none absolute inset-0" aria-hidden />
 
@@ -112,8 +239,8 @@ export default function Hero() {
           </h1>
 
           <p className="hero-sub mt-4 max-w-md text-sm leading-relaxed text-white/50">
-            Strategy, systems and AI-powered execution, from first insight to
-            shipped outcome. Select a destination.
+            Most consultancies hand you a deck. I ship product with you,
+            strategy through launch. Scan a destination to see the proof.
           </p>
 
           {/* AAA game menu */}
@@ -135,7 +262,6 @@ export default function Hero() {
                         isHover ? "border-accent bg-accent/[0.07]" : "border-white/10 bg-transparent"
                       } ${isLaunch ? "menu-launch" : ""}`}
                     >
-                      {/* sweep + scan effects */}
                       <span className={`menu-sweep ${isHover ? "menu-sweep-on" : ""}`} aria-hidden />
                       <span
                         className={`pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-accent shadow-[0_0_12px_2px_rgba(16,185,129,0.7)] transition-transform duration-300 ${
@@ -178,10 +304,9 @@ export default function Hero() {
           </nav>
         </div>
 
-        {/* right: live preview pane, AAA menu style */}
+        {/* right: live scan pane with real content per destination */}
         <div className="hero-meta pointer-events-none hidden lg:block">
           <div className="preview-pane relative mx-auto aspect-[4/3] w-full max-w-md">
-            {/* corner brackets */}
             <span className="absolute left-0 top-0 h-6 w-6 border-l-2 border-t-2 border-accent/70" aria-hidden />
             <span className="absolute right-0 top-0 h-6 w-6 border-r-2 border-t-2 border-accent/70" aria-hidden />
             <span className="absolute bottom-0 left-0 h-6 w-6 border-b-2 border-l-2 border-accent/70" aria-hidden />
@@ -200,12 +325,40 @@ export default function Hero() {
                   {preview ? (
                     <>
                       <div>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-accent">
-                          {preview.tag}
-                        </p>
+                        <div className="flex items-center justify-between">
+                          <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-accent">
+                            {preview.tag}
+                          </p>
+                          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/30">
+                            {preview.stat}
+                          </p>
+                        </div>
                         <p className="mt-3 text-3xl font-bold uppercase tracking-wide">{preview.label}</p>
-                        <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-white/50">
+                        <p className="mt-3 max-w-[34ch] text-sm leading-relaxed text-white/50">
                           {preview.desc}
+                        </p>
+                      </div>
+                      <div className="space-y-4">
+                        <PreviewBody label={preview.label} />
+                        <p className="text-right font-mono text-[10px] tracking-[0.3em] text-white/30">
+                          CLICK TO ENTER ▸
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-accent/70">
+                          SYSTEM ONLINE
+                        </p>
+                        <p className="mt-3 text-3xl font-bold uppercase tracking-wide text-white/80">
+                          Not another
+                          <br />
+                          consultancy.
+                        </p>
+                        <p className="mt-3 max-w-[30ch] text-sm leading-relaxed text-white/40">
+                          Everything on this menu is a real thing I&apos;ve
+                          shipped, not a slide. Hover a destination to scan it.
                         </p>
                       </div>
                       <div className="flex items-end justify-between">
@@ -218,28 +371,10 @@ export default function Hero() {
                             />
                           ))}
                         </span>
-                        <span className="font-mono text-[10px] tracking-[0.3em] text-white/30">
-                          PRESS ENTER ▸
+                        <span className="font-mono text-[10px] tracking-[0.3em] text-white/25">
+                          AWAITING INPUT<span className="caret-blink">_</span>
                         </span>
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-accent/70">
-                          SYSTEM ONLINE
-                        </p>
-                        <p className="mt-3 text-3xl font-bold uppercase tracking-wide text-white/80">
-                          Main Menu
-                        </p>
-                        <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-white/40">
-                          Hover a destination to scan it. Products shipped: many.
-                          Decks produced: zero.
-                        </p>
-                      </div>
-                      <span className="font-mono text-[10px] tracking-[0.3em] text-white/25">
-                        AWAITING INPUT<span className="caret-blink">_</span>
-                      </span>
                     </>
                   )}
                 </motion.div>

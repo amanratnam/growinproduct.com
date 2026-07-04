@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -16,6 +16,59 @@ const marqueeItems = [
   "Fractional Leadership",
 ];
 
+/* the things we could build together, typed and retyped by a human hand */
+const buildables = [
+  "a roadmap with a spine",
+  "PRDs engineers actually read",
+  "your AI copilot",
+  "workflows that run themselves",
+  "a product that grows",
+  "the thing you keep postponing",
+];
+
+function TypeCycle() {
+  const [text, setText] = useState("");
+  const [wordIdx, setWordIdx] = useState(0);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setText(buildables[0]);
+      return;
+    }
+
+    const word = buildables[wordIdx];
+    let pos = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const type = () => {
+      pos += 1;
+      setText(word.slice(0, pos));
+      if (pos < word.length) {
+        timer = setTimeout(type, 45 + Math.random() * 50); // human-ish rhythm
+      } else {
+        timer = setTimeout(erase, 1700);
+      }
+    };
+    const erase = () => {
+      pos -= 1;
+      setText(word.slice(0, pos));
+      if (pos > 0) timer = setTimeout(erase, 24);
+      else setWordIdx((i) => (i + 1) % buildables.length);
+    };
+
+    timer = setTimeout(type, 300);
+    return () => clearTimeout(timer);
+  }, [wordIdx]);
+
+  return (
+    <span className="text-accent" aria-live="off">
+      {text}
+      <span className="caret-blink ml-0.5 inline-block h-[1em] w-[2px] translate-y-[2px] bg-accent" aria-hidden />
+    </span>
+  );
+}
+
 export default function CTA() {
   const sectionRef = useRef<HTMLElement>(null);
   const btnRef = useRef<HTMLAnchorElement>(null);
@@ -23,7 +76,6 @@ export default function CTA() {
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
-      // big headline: chars rise with stagger, scrubbed slightly
       gsap.fromTo(
         ".cta-line",
         { yPercent: 110 },
@@ -121,9 +173,14 @@ export default function CTA() {
           </span>
         </h2>
 
-        <p className="cta-after mx-auto mt-8 max-w-lg text-lg leading-relaxed text-white/60">
-          One conversation. No deck, no discovery-call theater, just your
-          product problem and a straight answer on whether I can help.
+        {/* live-typed line: what we could build together */}
+        <p className="cta-after mx-auto mt-8 min-h-[2em] max-w-2xl text-xl leading-relaxed text-white/70 sm:text-2xl">
+          Together we could build <TypeCycle />
+        </p>
+
+        <p className="cta-after mx-auto mt-4 max-w-lg text-base leading-relaxed text-white/50">
+          One honest conversation to start. No deck, no discovery-call
+          theater, and no bots, the reply comes from me.
         </p>
 
         <div className="cta-after mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -132,7 +189,7 @@ export default function CTA() {
             href="/contact"
             className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-accent px-10 py-5 text-base font-semibold text-white shadow-[0_20px_60px_-15px_rgba(16,185,129,0.6)] transition-shadow hover:shadow-[0_25px_70px_-12px_rgba(16,185,129,0.8)]"
           >
-            <span className="relative z-10">Start a project</span>
+            <span className="relative z-10">Let&apos;s build it together</span>
             <svg viewBox="0 0 16 16" className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" aria-hidden>
               <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
