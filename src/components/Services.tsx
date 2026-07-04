@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionShell from "./SectionShell";
+import { PopChar, SittingCoder } from "./Characters";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -212,6 +213,10 @@ export default function Services() {
       title="Every layer of the product, handled."
       blurb="Six disciplines, one operator. Strategy through shipping, without the agency overhead. Hover a card to see it work."
     >
+      {/* coder perched on the seam between the dark hero and this section */}
+      <PopChar className="-top-10 right-2 w-28 sm:-top-16 sm:right-8 sm:w-40 lg:-top-20 lg:right-14 lg:w-52">
+        <SittingCoder />
+      </PopChar>
       <div ref={gridRef} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {services.map((s, i) => (
           <article key={s.title} className="service-card panel group flex flex-col p-4 will-change-transform">
