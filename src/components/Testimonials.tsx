@@ -3,6 +3,7 @@
 import { type ReactNode } from "react";
 import SectionShell from "./SectionShell";
 import { CrosshairIcon, ChartUpIcon, DocIcon } from "./Icons";
+import { PopChar, RocketLaptop } from "./Characters";
 
 type Category = "interview" | "strategy" | "articles";
 
@@ -179,6 +180,11 @@ export default function Testimonials() {
           Hover to pause. Names withheld for privacy.
         </p>
       </div>
+
+      {/* rocket launching over the seam into the dark CTA below */}
+      <PopChar className="-bottom-12 right-2 w-32 sm:-bottom-16 sm:right-10 sm:w-48 lg:right-16 lg:w-56">
+        <RocketLaptop />
+      </PopChar>
     </SectionShell>
   );
 }

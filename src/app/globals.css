@@ -467,6 +467,109 @@ body {
   animation: greet-bob 3.2s ease-in-out infinite;
 }
 
+/* ---------- pop-out characters ---------- */
+@keyframes soft-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.float-soft {
+  animation: soft-float 3.4s ease-in-out infinite;
+}
+
+@keyframes char-doc-bob {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+}
+
+.char-doc {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: char-doc-bob var(--dur, 4s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes type-tap {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2.5px); }
+}
+
+.type-hand-l,
+.type-hand-r {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: type-tap 0.26s linear infinite;
+}
+
+.type-hand-r {
+  animation-delay: 0.13s;
+}
+
+@keyframes head-nod {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(2.5px) rotate(1.5deg); }
+}
+
+.head-nod {
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+  animation: head-nod 3.2s ease-in-out infinite;
+}
+
+@keyframes point-arm-anim {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-8deg); }
+}
+
+.point-arm {
+  transform-box: fill-box;
+  transform-origin: 85% 75%;
+  animation: point-arm-anim 2.2s ease-in-out infinite;
+}
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.6); opacity: 0.75; }
+}
+
+.flame {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: flame-flicker 0.3s ease-in-out infinite;
+}
+
+@keyframes puff-anim {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+.puff {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: puff-anim 2.6s ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes rocket-hover-anim {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.rocket-hover {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rocket-hover-anim 1.7s ease-in-out infinite;
+}
+
+@keyframes leg-swing-anim {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+.leg-swing {
+  transform-box: fill-box;
+  transform-origin: 20% 10%;
+  animation: leg-swing-anim 2.8s ease-in-out infinite;
+}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

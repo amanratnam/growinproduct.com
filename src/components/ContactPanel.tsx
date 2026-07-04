@@ -9,20 +9,36 @@ const EMAIL = "hello@growinproduct.com";
 /* friendly greeter waving over the top edge of the invitation card */
 function Greeter() {
   return (
-    <svg viewBox="0 0 140 120" className="greeter h-full w-full" aria-hidden>
+    <svg
+      viewBox="0 0 140 120"
+      className="greeter h-full w-full"
+      style={{ filter: "drop-shadow(0 10px 12px rgba(5, 8, 7, 0.2))" }}
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id="gr-skin" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fbe3cd" />
+          <stop offset="100%" stopColor="#f0c8a8" />
+        </linearGradient>
+        <linearGradient id="gr-hoodie" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#22c58b" />
+          <stop offset="100%" stopColor="#0c8c66" />
+        </linearGradient>
+      </defs>
       {/* waving arm, behind the body */}
       <g className="greet-arm">
         <path d="M62 74 Q44 58 34 36" stroke="#0c8c66" strokeWidth="13" strokeLinecap="round" fill="none" />
-        <circle cx="33" cy="32" r="9" fill="#f4d7c0" />
+        <circle cx="33" cy="32" r="9" fill="url(#gr-skin)" />
       </g>
       {/* torso hoodie, bottom edge hides behind the card border */}
-      <path d="M46 120 q-3 -44 24 -50 q30 -4 30 50z" fill="#10b981" />
+      <path d="M46 120 q-3 -44 24 -50 q30 -4 30 50z" fill="url(#gr-hoodie)" />
+      <ellipse cx="60" cy="92" rx="7" ry="13" fill="rgba(255,255,255,0.3)" opacity="0.5" />
       {/* hood */}
-      <path d="M56 74 q0 -10 20 -10 q18 0 18 10 q-10 -5 -18 -5 q-10 0 -20 5z" fill="#0c8c66" />
+      <path d="M56 74 q0 -10 20 -10 q18 0 18 10 q-10 -5 -18 -5 q-10 0 -20 5z" fill="#0a7a58" />
       {/* head */}
-      <circle cx="78" cy="44" r="21" fill="#f4d7c0" />
+      <circle cx="78" cy="44" r="21" fill="url(#gr-skin)" />
       {/* hair */}
-      <path d="M58 40 q2 -20 24 -18 q17 2 15 18 q-3 -9 -17 -10 q-16 -1 -22 10z" fill="#0a0a0a" />
+      <path d="M58 40 q2 -20 24 -18 q17 2 15 18 q-3 -9 -17 -10 q-16 -1 -22 10z" fill="#1c1512" />
       {/* eyes + smile */}
       <circle cx="72" cy="44" r="2.2" fill="#0a0a0a" />
       <circle cx="86" cy="44" r="2.2" fill="#0a0a0a" />

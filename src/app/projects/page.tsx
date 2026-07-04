@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Projects from "@/components/Projects";
+import { PopChar, Presenter } from "@/components/Characters";
 
 export const metadata: Metadata = {
   title: "Past Projects",
@@ -31,7 +32,11 @@ export default function ProjectsPage() {
         <Projects standalone />
       </section>
 
-      <section className="border-t border-line bg-foreground/[0.018] py-20">
+      <section className="relative border-t border-line bg-foreground/[0.018] py-20">
+        {/* presenter pops out of the banner, pointing back up at the work */}
+        <PopChar className="-top-14 right-3 w-32 sm:-top-24 sm:right-12 sm:w-48 lg:right-24 lg:w-52">
+          <Presenter />
+        </PopChar>
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 sm:flex-row sm:items-center lg:px-12">
           <div>
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
