@@ -1,582 +1,529 @@
 @import "tailwindcss";
 
+/* ===========================================================================
+   GROW IN PRODUCT — design system
+   White canvas, black ink, one hairline rule, one accent that swaps per
+   section. Every measurement below is a token; components never invent their
+   own padding, rule colour or easing.
+   =========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --muted: #6b7280;
-  --accent: #10b981;
-  --accent-dark: #059669;
-  --accent-soft: #ecfdf5;
-  --line: #e8e8e8;
+  /* ---- ink ---- */
+  --bg: #ffffff;
+  --ink: #0a0a0a;
+  --ink-60: rgba(10, 10, 10, 0.6);
+  --ink-40: rgba(10, 10, 10, 0.4);
+  --ink-20: rgba(10, 10, 10, 0.2);
+  --muted: #6f6f6f;
+  --rule: #d9d9d9;
+  --rule-soft: #ececec;
+
+  /* ---- accent, swapped by [data-theme] as sections scroll past ---- */
+  --accent-red: #d81e20;
+  --accent-black: #0a0a0a;
+  --accent: #d81e20;
+
+  /* ---- frame geometry: the single source of alignment ---- */
+  --pad: clamp(16px, 3.2vw, 40px); /* page gutter, everything aligns to it */
+  --header-h: 68px;
+  --frame-inset: var(--pad);
+  --tick: 10px; /* centre tick length on frame edges */
+  --stroke: 1px;
+
+  /* ---- vertical rhythm ---- */
+  --block: clamp(72px, 11vh, 140px); /* space between major blocks */
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 0.6s;
+
+  /* ---- scroll-driven, written by JS ---- */
+  --footer-progress: 0;
+
+  color: var(--ink);
+}
+
+/* Not scoped to :root, so a case section can also carry a theme and own the
+   accent for its own subtree. That keeps each plate internally consistent no
+   matter which section the page-level theme currently follows. */
+[data-theme="red"] {
+  --accent: #d81e20;
+}
+[data-theme="black"] {
+  --accent: #0a0a0a;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-h: 56px;
+  }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
   --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
   --color-accent: var(--accent);
-  --color-accent-dark: var(--accent-dark);
-  --color-accent-soft: var(--accent-soft);
-  --color-line: var(--line);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-montserrat);
+  --font-display: var(--font-anton);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scrollbar-width: none;
+  overscroll-behavior-x: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
 }
 
 html.lenis,
 html.lenis body {
   height: auto;
 }
-
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
-
 .lenis.lenis-stopped {
   overflow: hidden;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-
-::selection {
-  background: var(--accent);
-  color: #fff;
-}
-
-/* ---------- animated hero grid ---------- */
-.hero-grid {
-  background-image:
-    linear-gradient(to right, rgba(10, 10, 10, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(10, 10, 10, 0.045) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 75%);
-}
-
-.hero-glow {
-  background: radial-gradient(
-    circle at center,
-    rgba(16, 185, 129, 0.14) 0%,
-    rgba(16, 185, 129, 0.05) 35%,
-    transparent 70%
-  );
-}
-
-/* ---------- floating cards ---------- */
-.float-card {
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(10, 10, 10, 0.07);
-  box-shadow:
-    0 1px 2px rgba(10, 10, 10, 0.04),
-    0 12px 32px rgba(10, 10, 10, 0.08);
-  will-change: transform;
-}
-
-/* ---------- generic card ---------- */
-.panel {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 1.25rem;
-  transition:
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.3s ease;
-}
-
-.panel:hover {
-  transform: translateY(-6px);
-  border-color: rgba(16, 185, 129, 0.35);
-  box-shadow:
-    0 1px 2px rgba(10, 10, 10, 0.04),
-    0 24px 48px -12px rgba(10, 10, 10, 0.12);
-}
-
-/* ---------- skeleton doc lines (PRD visual) ---------- */
-@keyframes line-grow {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-.doc-line {
-  transform-origin: left center;
-  transform: scaleX(0);
-}
-
-.in-view .doc-line {
-  animation: line-grow 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* ---------- pulse for AI visual ---------- */
-@keyframes soft-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
-}
-
-.pulse-dot {
-  animation: soft-pulse 2.4s ease-in-out infinite;
-}
-
-/* ---------- dashed flow line ---------- */
-@keyframes dash-flow {
-  to { stroke-dashoffset: -24; }
-}
-
-.flow-line {
-  stroke-dasharray: 6 6;
-  animation: dash-flow 1.4s linear infinite;
-}
-
-/* ---------- marquee ---------- */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.marquee-track {
-  animation: marquee 28s linear infinite;
-  will-change: transform;
-}
-
-/* ---------- testimonial wall (horizontal marquee rows) ---------- */
-@keyframes tm-scroll {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
-}
-
-.tm-row {
+/* Overlay scroll lock. Deliberately on <html>: the same declaration on <body>
+   turns body into the scrollport and breaks every sticky element on the page. */
+.scroll-locked {
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
 }
 
-.tm-track {
-  display: flex;
-  width: max-content;
-  animation: tm-scroll var(--tm-dur, 60s) linear infinite;
-  animation-direction: var(--tm-dir, normal);
-  will-change: transform;
+/* --------------------------------------------------------------- type ---- */
+
+.display {
+  font-family: var(--font-anton), Impact, "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
 
-.tm-row:hover .tm-track {
-  animation-play-state: paused;
+/* The micro-label used everywhere: section eyebrows, meta rows, table heads.
+   One definition means they can never drift apart. */
+.label {
+  font-size: clamp(0.58rem, 0.7vw, 0.7rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tm-row {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  .tm-track {
-    animation: none;
-  }
-  .tm-clone {
-    display: none;
-  }
+.prose-lead {
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
+  line-height: 1.6;
+  color: var(--muted);
 }
 
-/* ---------- bars ---------- */
-@keyframes bar-grow {
-  from { transform: scaleY(0.15); }
-  to { transform: scaleY(1); }
-}
+/* ------------------------------------------------------- footer reveal ---- */
 
-.bar-anim {
-  transform: scaleY(0.15);
-  transform-origin: bottom;
-}
-
-.in-view .bar-anim {
-  animation: bar-grow 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* ---------- AAA hero menu ---------- */
-.hero-vignette {
-  background:
-    radial-gradient(ellipse 90% 80% at 50% 45%, transparent 40%, rgba(3, 6, 5, 0.85) 100%),
-    linear-gradient(to bottom, rgba(3, 6, 5, 0.5), transparent 18%, transparent 78%, rgba(3, 6, 5, 0.9));
-}
-
-.hero-scanlines {
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.015) 0px,
-    rgba(255, 255, 255, 0.015) 1px,
-    transparent 1px,
-    transparent 4px
-  );
-  mix-blend-mode: overlay;
-}
-
-.menu-sweep {
+/* As the black footer plate takes the viewport, a matching fill slides up
+   behind the header and its ink flips to white, so the bar never sits as a
+   white band across the dark plate. */
+.site-header::before {
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(100deg, transparent 20%, rgba(16, 185, 129, 0.18) 50%, transparent 80%);
-  transform: translateX(-110%);
+  z-index: 0;
+  background: var(--ink);
+  pointer-events: none;
+  opacity: 0;
+  /* matches the ink transition on .site-header so the bar never shows a
+     half-filled or low-contrast intermediate state */
+  transition: opacity 0.3s var(--ease);
+}
+.footer-taken .site-header::before {
+  opacity: 1;
+}
+.site-header > * {
+  position: relative;
+  z-index: 1;
+}
+.footer-taken .site-header {
+  color: var(--bg);
+}
+.footer-taken .site-header .header-rule {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.footer-taken .site-header .header-mark {
+  filter: brightness(0) invert(1);
+}
+/* the active tab inverts too, or it disappears into the fill */
+.footer-taken .site-header [aria-current="page"] {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+
+/* Page content is opaque and rides above the fixed footer plate; once it has
+   scrolled past, the transparent spacer lets the footer show through. */
+#main {
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+}
+
+/* --------------------------------------------------------- page frame ---- */
+
+/* Every section on every page uses .shell for its horizontal bounds, which is
+   why columns line up from the header down through the footer. */
+.shell {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* A full-viewport bordered plate with centre ticks on each edge, the
+   reference's signature container. */
+.frame {
+  position: relative;
+  width: calc(100% - var(--frame-inset) * 2);
+  margin-inline: auto;
+  border: var(--stroke) solid var(--rule);
+  background: var(--bg);
+}
+
+.frame__ticks span {
+  position: absolute;
+  background: var(--rule);
   pointer-events: none;
 }
-
-.menu-sweep-on {
-  animation: menu-sweep-anim 0.55s ease-out forwards;
+.frame__ticks span:nth-child(1),
+.frame__ticks span:nth-child(2) {
+  left: 50%;
+  width: var(--stroke);
+  height: var(--tick);
+  transform: translateX(-50%);
+}
+.frame__ticks span:nth-child(1) {
+  top: 0;
+}
+.frame__ticks span:nth-child(2) {
+  bottom: 0;
+}
+.frame__ticks span:nth-child(3),
+.frame__ticks span:nth-child(4) {
+  top: 50%;
+  width: var(--tick);
+  height: var(--stroke);
+  transform: translateY(-50%);
+}
+.frame__ticks span:nth-child(3) {
+  left: 0;
+}
+.frame__ticks span:nth-child(4) {
+  right: 0;
 }
 
-@keyframes menu-sweep-anim {
-  to { transform: translateX(110%); }
+/* ------------------------------------------------------------ controls ---- */
+
+/* Pill button. Inverts to solid accent on hover, dips on press. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  min-height: 42px;
+  padding: 0 1.25rem;
+  border: var(--stroke) solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.28s var(--ease),
+    background-color 0.28s var(--ease),
+    border-color 0.28s var(--ease),
+    transform 0.18s var(--ease);
+}
+.pill:hover {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.pill:active {
+  scale: 0.94;
+}
+.pill--solid {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.pill--solid:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.pill--invert {
+  color: var(--bg);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.pill--invert:hover {
+  color: var(--ink);
+  background: var(--bg);
+  border-color: var(--bg);
 }
 
-@keyframes label-flicker {
-  0% { opacity: 0.4; }
-  8% { opacity: 1; }
-  14% { opacity: 0.5; }
-  22% { opacity: 1; }
-  32% { opacity: 0.8; }
-  40%, 100% { opacity: 1; }
+/* Link that underlines from the left on hover. */
+.ulink {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
 }
-
-.menu-label-flicker {
-  animation: label-flicker 0.5s linear;
-}
-
-@keyframes menu-launch-anim {
-  0% { background-color: rgba(16, 185, 129, 0.07); transform: translateX(0); }
-  30% { background-color: rgba(16, 185, 129, 0.45); transform: translateX(10px); }
-  100% { background-color: rgba(16, 185, 129, 0); transform: translateX(26px); opacity: 0.2; }
-}
-
-.menu-launch {
-  animation: menu-launch-anim 0.32s ease-in forwards;
-}
-
-@keyframes bar-eq {
-  0%, 100% { transform: scaleY(0.4); }
-  50% { transform: scaleY(1); }
-}
-
-.preview-bars span {
-  transform-origin: bottom;
-  animation: bar-eq 1.1s ease-in-out infinite;
-}
-
-@keyframes caret-blink-anim {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-.caret-blink {
-  animation: caret-blink-anim 0.9s steps(1) infinite;
-}
-
-/* ---------- service visuals replay on card hover ---------- */
-@keyframes bar-grow-replay {
-  from { transform: scaleY(0.15); }
-  to { transform: scaleY(1); }
-}
-
-.service-card:hover .bar-anim {
-  animation: bar-grow-replay 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes line-grow-replay {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-.service-card:hover .doc-line {
-  animation: line-grow-replay 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes path-redraw {
-  from { stroke-dashoffset: 260; }
-  to { stroke-dashoffset: 0; }
-}
-
-.service-card:hover .strategy-path {
-  stroke-dasharray: 260 !important;
-  animation: path-redraw 1.1s ease-in-out forwards;
-}
-
-@keyframes node-hop {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
-}
-
-.service-card:hover .wf-node-1 { animation: node-hop 0.6s ease-in-out; }
-.service-card:hover .wf-node-2 { animation: node-hop 0.6s ease-in-out 0.12s; }
-.service-card:hover .wf-node-3 { animation: node-hop 0.6s ease-in-out 0.24s; }
-
-@keyframes ai-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
-}
-
-.service-card:hover .ai-node { animation: ai-blink 0.9s ease-in-out infinite; }
-
-@keyframes avatar-wave {
-  0%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-9px); }
-}
-
-.service-card:hover .lead-avatar { animation: avatar-wave 0.7s ease-in-out; }
-
-/* ---------- footer typist scene ---------- */
-@keyframes arm-tap-l {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(5deg); }
-}
-
-@keyframes arm-tap-r {
-  0%, 100% { transform: rotate(4deg); }
-  50% { transform: rotate(0deg); }
-}
-
-.typist .arm-l {
-  transform-origin: 262px 172px;
-  animation: arm-tap-l 0.22s linear infinite;
-}
-
-.typist .arm-r {
-  transform-origin: 284px 168px;
-  animation: arm-tap-r 0.22s linear infinite 0.11s;
-}
-
-@keyframes head-bob {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(2.5px) rotate(1.2deg); }
-}
-
-.typist .head {
-  transform-origin: 276px 140px;
-  animation: head-bob 2.6s ease-in-out infinite;
-}
-
-@keyframes eye-blink {
-  0%, 92%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
-}
-
-.typist .eye {
-  transform-origin: 290px 128px;
-  animation: eye-blink 3.4s linear infinite;
-}
-
-@keyframes code-type {
-  0% { transform: scaleX(0); }
-  12%, 82% { transform: scaleX(1); }
-  88%, 100% { transform: scaleX(0); }
-}
-
-.typist .code-line {
-  transform-origin: left center;
+.ulink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
   transform: scaleX(0);
-  animation: code-type 6s ease-out infinite;
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.ulink:hover::after {
+  transform: scaleX(1);
 }
 
-.typist .cl-1 { animation-delay: 0s; }
-.typist .cl-2 { animation-delay: 0.7s; }
-.typist .cl-3 { animation-delay: 1.4s; }
-.typist .cl-4 { animation-delay: 2.1s; }
-.typist .cl-5 { animation-delay: 2.8s; }
-
-@keyframes caret-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
-.typist .screen-caret { animation: caret-blink 0.8s steps(1) infinite; }
+/* --------------------------------------------------------- hero title ---- */
 
-@keyframes steam-rise {
-  0% { transform: translateY(0); opacity: 0; }
-  35% { opacity: 0.8; }
-  100% { transform: translateY(-14px); opacity: 0; }
+/* The rotating word measures itself into a hidden span so the line's width
+   animates instead of snapping when a longer word swaps in. */
+.rotator {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  text-align: left;
+  transition: width 0.5s var(--ease);
+}
+.rotator__item {
+  display: block;
+  white-space: nowrap;
+}
+.rotator__item--in {
+  animation: rot-in 0.55s var(--ease) both;
+}
+.rotator__item--out {
+  position: absolute;
+  inset: 0;
+  animation: rot-out 0.55s var(--ease) both;
+}
+.rotator__measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  top: 0;
+  left: 0;
 }
 
-.typist .s-1 { animation: steam-rise 2.2s ease-out infinite; }
-.typist .s-2 { animation: steam-rise 2.2s ease-out infinite 1.1s; }
-
-@keyframes spark-pop {
-  0%, 70%, 100% { transform: translateY(0); opacity: 0; }
-  78% { transform: translateY(-7px); opacity: 1; }
-  92% { transform: translateY(-12px); opacity: 0; }
+@keyframes rot-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes rot-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
 }
 
-.typist .k-1 { animation: spark-pop 1.3s linear infinite; }
-.typist .k-2 { animation: spark-pop 1.3s linear infinite 0.45s; }
-.typist .k-3 { animation: spark-pop 1.3s linear infinite 0.9s; }
+/* ------------------------------------------------------------ marquee ---- */
 
-@keyframes notif-float {
-  0% { transform: translateY(8px); opacity: 0; }
-  18%, 72% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-10px); opacity: 0; }
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
 }
-
-.typist .n-1 { animation: notif-float 5s ease-in-out infinite; }
-.typist .n-2 { animation: notif-float 5s ease-in-out infinite 2.5s; }
-
-@keyframes lamp-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-.typist .lamp-glow { animation: lamp-pulse 3.5s ease-in-out infinite; }
-
-@keyframes leaf-sway {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2.5deg); }
-}
-
-.typist .leaf {
-  transform-origin: 182px 218px;
-  animation: leaf-sway 4s ease-in-out infinite;
-}
-
-/* ---------- invitation page ---------- */
-@keyframes confetti-drift {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-16px) rotate(14deg); }
-}
-
-.confetti-bit {
-  animation: confetti-drift var(--dur, 6s) ease-in-out var(--delay, 0s) infinite;
+.marquee__track {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
   will-change: transform;
+  animation: marquee var(--marquee-dur, 42s) linear infinite;
+  animation-direction: var(--marquee-dir, normal);
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
-@keyframes greet-wave {
-  0%, 100% { transform: rotate(0deg); }
-  35% { transform: rotate(-24deg); }
-  55% { transform: rotate(-6deg); }
-  75% { transform: rotate(-22deg); }
+/* ------------------------------------------------------- scroll reveal ---- */
+
+/* One reveal primitive. Components add .reveal and an optional --reveal-delay
+   rather than each writing its own GSAP tween. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.75s var(--ease) var(--reveal-delay, 0s),
+    transform 0.75s var(--ease) var(--reveal-delay, 0s);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
 }
 
-.greet-arm {
-  transform-origin: 62px 74px;
-  animation: greet-wave 2.6s ease-in-out infinite;
+.reveal-line {
+  display: block;
+  overflow: hidden;
+}
+.reveal-line > * {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 0.9s var(--ease) var(--reveal-delay, 0s);
+}
+.is-in .reveal-line > *,
+.reveal-line.is-in > * {
+  transform: none;
 }
 
-@keyframes greet-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+/* --------------------------------------------------------- case stack ---- */
+
+/* Cases stack: each plate pins below the header while the next one rises over
+   it. The slot is taller than the viewport so a pinned plate gets a stretch of
+   scroll to itself before the next begins to cover it — without that dwell,
+   each case is fully visible for only a single frame. */
+.case-section {
+  position: relative;
+  height: 150svh;
 }
 
-.greeter {
-  animation: greet-bob 3.2s ease-in-out infinite;
+.case-plate {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100svh - var(--header-h));
+  background: var(--bg);
 }
 
-/* ---------- pop-out characters ---------- */
-@keyframes soft-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
+/* Absolute inset rather than margins, so the plate can never add to its own
+   height and push its footer out of view. */
+.case-plate > .frame {
+  position: absolute;
+  inset: var(--frame-inset);
+  width: auto;
+  margin: 0;
 }
 
-.float-soft {
-  animation: soft-float 3.4s ease-in-out infinite;
+/* Let the artwork give up space to the title block instead of forcing the
+   column taller than the plate. On narrow screens the type needs most of the
+   plate, so the art is capped rather than merely flexible. */
+.case-art {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+@media (max-width: 767px) {
+  .case-art {
+    flex: 0 1 34%;
+  }
 }
 
-@keyframes char-doc-bob {
-  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-  50% { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+/* --------------------------------------------------------------- misc ---- */
+
+.rule-t {
+  border-top: var(--stroke) solid var(--rule);
+}
+.rule-b {
+  border-bottom: var(--stroke) solid var(--rule);
 }
 
-.char-doc {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: char-doc-bob var(--dur, 4s) ease-in-out var(--delay, 0s) infinite;
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
 }
 
-@keyframes type-tap {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(2.5px); }
+.caret {
+  animation: caret 1.05s steps(1) infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
 }
 
-.type-hand-l,
-.type-hand-r {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: type-tap 0.26s linear infinite;
-}
+/* ------------------------------------------------------ reduced motion ---- */
 
-.type-hand-r {
-  animation-delay: 0.13s;
-}
-
-@keyframes head-nod {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(2.5px) rotate(1.5deg); }
-}
-
-.head-nod {
-  transform-box: fill-box;
-  transform-origin: 50% 90%;
-  animation: head-nod 3.2s ease-in-out infinite;
-}
-
-@keyframes point-arm-anim {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(-8deg); }
-}
-
-.point-arm {
-  transform-box: fill-box;
-  transform-origin: 85% 75%;
-  animation: point-arm-anim 2.2s ease-in-out infinite;
-}
-
-@keyframes flame-flicker {
-  0%, 100% { transform: scaleY(1); opacity: 1; }
-  50% { transform: scaleY(0.6); opacity: 0.75; }
-}
-
-.flame {
-  transform-box: fill-box;
-  transform-origin: 50% 0%;
-  animation: flame-flicker 0.3s ease-in-out infinite;
-}
-
-@keyframes puff-anim {
-  0%, 100% { transform: scale(1); opacity: 0.95; }
-  50% { transform: scale(1.1); opacity: 1; }
-}
-
-.puff {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: puff-anim 2.6s ease-in-out var(--delay, 0s) infinite;
-}
-
-@keyframes rocket-hover-anim {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.rocket-hover {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: rocket-hover-anim 1.7s ease-in-out infinite;
-}
-
-@keyframes leg-swing-anim {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(4deg); }
-}
-
-.leg-swing {
-  transform-box: fill-box;
-  transform-origin: 20% 10%;
-  animation: leg-swing-anim 2.8s ease-in-out infinite;
-}
-
-/* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
+    animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-line > * {
+    transform: none;
+  }
+  .case-section {
+    height: auto;
+  }
+  .case-plate {
+    position: relative;
+    top: 0;
+    height: 88svh;
   }
 }

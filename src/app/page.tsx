@@ -1,17 +1,19 @@
 import Hero from "@/components/Hero";
-import Services from "@/components/Services";
-import About from "@/components/About";
-import Testimonials from "@/components/Testimonials";
-import CTA from "@/components/CTA";
+import ServiceIndex from "@/components/ServiceIndex";
+import CaseStack from "@/components/CaseStack";
+import ProcessStages from "@/components/ProcessStages";
+import AboutBlock from "@/components/AboutBlock";
+import Praise from "@/components/Praise";
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <Services />
-      <About />
-      <Testimonials />
-      <CTA />
+      <ServiceIndex />
+      <CaseStack />
+      <ProcessStages />
+      <AboutBlock />
+      <Praise />
     </main>
   );
 }
