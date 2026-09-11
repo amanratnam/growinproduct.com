@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Process from "@/components/Process";
+import ProcessStages from "@/components/ProcessStages";
+import Reveal, { RevealLines } from "@/components/Reveal";
+import { stages } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Process",
@@ -11,50 +13,47 @@ export const metadata: Metadata = {
 export default function ProcessPage() {
   return (
     <main>
-      {/* intro strip */}
-      <section className="bg-[#050807] pb-4 pt-28 text-white lg:pt-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <p className="font-mono text-[11px] uppercase tracking-[0.45em] text-accent">
-            Campaign mode
+      <section className="shell pb-[clamp(36px,6vh,72px)] pt-[clamp(40px,8vh,96px)]">
+        <div className="rule-b flex items-baseline justify-between gap-4 pb-4">
+          <p className="label text-ink-40">How the work runs</p>
+          <p className="label text-ink-40">
+            {String(stages.length).padStart(2, "0")} stages
           </p>
-          <h1 className="mt-4 max-w-2xl text-4xl font-bold tracking-tighter sm:text-5xl lg:text-6xl">
-            The road every engagement drives.
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-white/50">
-            No mystery, no methodology theater. Five pitstops, each with a
-            clear deliverable, run in tight loops until the product ships and
-            compounds.
-          </p>
+        </div>
+
+        <h1 className="display mt-[clamp(24px,5vh,56px)] text-[clamp(2.4rem,9vw,8rem)]">
+          <RevealLines lines={["Same five", "stages, always"]} stagger={0.1} />
+        </h1>
+
+        <div className="mt-[clamp(28px,6vh,64px)] grid gap-8 md:grid-cols-12">
+          <div className="md:col-span-5 lg:col-span-4">
+            <p className="label text-ink-40">No mystery</p>
+          </div>
+          <div className="md:col-span-7 lg:col-span-8">
+            <Reveal as="p" className="prose-lead max-w-[52ch] text-ink">
+              No methodology theatre and no black box. Five stages, each with a
+              deliverable you can hold, run in tight loops until the product
+              ships and keeps compounding after.
+            </Reveal>
+          </div>
         </div>
       </section>
 
-      <Process />
+      <ProcessStages standalone />
 
-      {/* hand-off */}
-      <section className="bg-white py-24">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 sm:flex-row sm:items-center lg:px-12">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-              Want to see where the road ends?
-            </h2>
-            <p className="mt-3 max-w-md text-muted">
-              The destinations are real products with real numbers. Browse the
-              case studies or start your own drive.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/projects"
-              className="rounded-full border border-line bg-white px-7 py-3.5 text-sm font-semibold transition-all duration-300 hover:scale-[1.04] hover:border-foreground/30"
-            >
+      <section className="shell pb-[var(--block)]">
+        <div className="rule-t" />
+        <div className="flex flex-col items-start justify-between gap-8 pt-10 md:flex-row md:items-end">
+          <h2 className="display max-w-[18ch] text-[clamp(1.8rem,4.6vw,3.6rem)]">
+            See where the road ends
+          </h2>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <Link href="/projects" className="pill">
               View the work
             </Link>
-            <Link
-              href="/contact"
-              className="group relative overflow-hidden rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:scale-[1.04]"
-            >
-              <span className="relative z-10">Start a project</span>
-              <span className="absolute inset-0 -translate-x-full bg-accent transition-transform duration-500 ease-out group-hover:translate-x-0" />
+            <Link href="/contact" className="pill pill--solid">
+              Start a project
+              <span aria-hidden>→</span>
             </Link>
           </div>
         </div>

@@ -1,58 +1,55 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Projects from "@/components/Projects";
-import { PopChar, Presenter } from "@/components/Characters";
+import CaseStack from "@/components/CaseStack";
+import Reveal, { RevealLines } from "@/components/Reveal";
+import { cases } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Past Projects",
+  title: "Work",
   description:
-    "Case studies across healthcare SaaS, workflow optimization, product strategy and AI automation.",
+    "Case studies across healthcare SaaS, workflow optimisation, product strategy and AI automation. Details anonymised, numbers real.",
 };
 
 export default function ProjectsPage() {
   return (
     <main>
-      <section className="bg-white pb-8 pt-28 lg:pt-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <p className="text-sm font-semibold uppercase tracking-widest text-accent">
-            Past projects
+      <section className="shell pb-[clamp(36px,6vh,72px)] pt-[clamp(40px,8vh,96px)]">
+        <div className="rule-b flex items-baseline justify-between gap-4 pb-4">
+          <p className="label text-ink-40">Selected work</p>
+          <p className="label text-ink-40">
+            {String(cases.length).padStart(2, "0")} cases
           </p>
-          <h1 className="mt-3 max-w-2xl text-4xl font-bold tracking-tighter sm:text-5xl lg:text-6xl">
-            Outcomes, not deliverables.
-          </h1>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-            A sample of engagements across healthcare SaaS, operations,
-            strategy and AI. Details anonymized; the numbers aren&apos;t.
-            Swipe through and open any card for the full story.
-          </p>
+        </div>
+
+        <h1 className="display mt-[clamp(24px,5vh,56px)] text-[clamp(2.4rem,9vw,8rem)]">
+          <RevealLines lines={["Outcomes,", "not decks"]} stagger={0.1} />
+        </h1>
+
+        <div className="mt-[clamp(28px,6vh,64px)] grid gap-8 md:grid-cols-12">
+          <div className="md:col-span-5 lg:col-span-4">
+            <p className="label text-ink-40">The sample</p>
+          </div>
+          <div className="md:col-span-7 lg:col-span-8">
+            <Reveal as="p" className="prose-lead max-w-[52ch] text-ink">
+              Four engagements across healthcare SaaS, operations, strategy and
+              AI. Clients are anonymised; the numbers are not. Open any case for
+              the full story.
+            </Reveal>
+          </div>
         </div>
       </section>
 
-      <section className="bg-white pb-24">
-        <Projects standalone />
-      </section>
+      <CaseStack />
 
-      <section className="relative border-t border-line bg-foreground/[0.018] py-20">
-        {/* presenter pops out of the banner, pointing back up at the work */}
-        <PopChar className="-top-14 right-3 w-32 sm:-top-24 sm:right-12 sm:w-48 lg:right-24 lg:w-52">
-          <Presenter />
-        </PopChar>
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 sm:flex-row sm:items-center lg:px-12">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-              Your project could be next.
-            </h2>
-            <p className="mt-3 max-w-md text-muted">
-              Every one of these started with a single conversation about a
-              fuzzy problem.
-            </p>
-          </div>
-          <Link
-            href="/contact"
-            className="group relative overflow-hidden rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-white transition-transform duration-300 hover:scale-[1.04]"
-          >
-            <span className="relative z-10">Start the conversation</span>
-            <span className="absolute inset-0 -translate-x-full bg-accent transition-transform duration-500 ease-out group-hover:translate-x-0" />
+      <section className="shell py-[var(--block)]">
+        <div className="rule-t" />
+        <div className="flex flex-col items-start justify-between gap-8 pt-10 md:flex-row md:items-end">
+          <h2 className="display max-w-[16ch] text-[clamp(1.8rem,4.6vw,3.6rem)]">
+            Your project could be next
+          </h2>
+          <Link href="/contact" className="pill pill--solid shrink-0">
+            Start the conversation
+            <span aria-hidden>→</span>
           </Link>
         </div>
       </section>
