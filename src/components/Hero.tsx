@@ -29,9 +29,10 @@ export default function Hero() {
           <RevealLines
             lines={[
               "Grow in",
-              <span key="rotator" className="inline-flex items-baseline">
-                <WordRotator words={heroRotator} className="text-accent" />
-              </span>,
+              /* No wrapper: .reveal-line forces its child to display:block,
+                 which was overriding the wrapper's inline-flex and knocking
+                 the rotator's own box out of alignment. */
+              <WordRotator key="rotator" words={heroRotator} className="text-accent" />,
             ]}
             stagger={0.1}
           />
