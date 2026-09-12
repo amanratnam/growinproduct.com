@@ -182,8 +182,18 @@ html.lenis body {
   filter: brightness(0) invert(1);
 }
 /* the active tab inverts too, or it disappears into the fill */
-.footer-taken .site-header [aria-current="page"] {
+.footer-taken .site-header nav [aria-current="page"] {
   background: var(--bg);
+  color: var(--ink);
+}
+/* the CTA keeps its outline against the dark fill */
+.footer-taken .site-header .header-cta {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: var(--bg);
+}
+.footer-taken .site-header .header-cta:hover {
+  background: var(--bg);
+  border-color: var(--bg);
   color: var(--ink);
 }
 
@@ -690,7 +700,7 @@ select.glass-field {
   font-size: calc(var(--size, 1) * clamp(0.85rem, 1.5vw, 1.6rem));
   color: var(--ink);
   /* far words fade back, near words sit forward */
-  opacity: calc(0.06 + var(--depth, 0.5) * 0.15);
+  opacity: calc(0.035 + var(--depth, 0.5) * 0.085);
   transform-style: preserve-3d;
   transform: translate3d(
       calc(-50% + (var(--px, 0) * var(--depth, 0.5) * 44px)),
@@ -705,7 +715,7 @@ select.glass-field {
 /* every other word picks up the accent, so the field isn't uniform grey */
 .kw-word:nth-child(4n + 2) {
   color: var(--accent);
-  opacity: calc(0.06 + var(--depth, 0.5) * 0.2);
+  opacity: calc(0.045 + var(--depth, 0.5) * 0.11);
 }
 
 @keyframes kw-drift {

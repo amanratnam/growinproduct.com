@@ -68,7 +68,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="glass p-6 sm:p-10" noValidate>
+    <form onSubmit={onSubmit} className="glass p-6 sm:p-8" noValidate>
       <div className="flex items-baseline justify-between gap-4">
         <p className="label text-ink-40">Start a conversation</p>
         <p className="label flex items-center gap-2 text-ink-40">
@@ -77,7 +77,7 @@ export default function ContactForm() {
         </p>
       </div>
 
-      <div className="mt-7 grid gap-5 sm:grid-cols-2">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <Field
           label="Your name"
           name="name"
@@ -93,7 +93,7 @@ export default function ContactForm() {
         />
       </div>
 
-      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <Field
           label="Email"
           name="email"
@@ -127,14 +127,14 @@ export default function ContactForm() {
         </div>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4">
         <label htmlFor="problem" className="label block text-ink-40">
           Problem statement <span className="text-accent">*</span>
         </label>
         <textarea
           id="problem"
           name="problem"
-          rows={5}
+          rows={4}
           required
           placeholder="What's fuzzy? Half-formed is fine — that's usually where the useful work is."
           className="glass-field mt-2.5 resize-none"
@@ -149,7 +149,7 @@ export default function ContactForm() {
         <input id="website" name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-4">
+      <div className="mt-6 flex flex-wrap items-center gap-4">
         <button type="submit" className="pill pill--solid" disabled={status === "sending"}>
           {status === "sending" ? "Sending…" : "Send it over"}
           {status !== "sending" && <span aria-hidden>&rarr;</span>}
