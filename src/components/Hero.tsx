@@ -51,7 +51,9 @@ export default function Hero() {
               of juniors behind a pitch.
             </Reveal>
 
-            <Reveal delay={0.2} className="mt-8 flex flex-wrap items-center gap-3">
+            {/* Full-width and stacked on a phone: side by side they wrapped to
+                two ragged rows of different widths. */}
+            <Reveal delay={0.2} className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link href="/work" className="pill pill--solid">
                 See the work
               </Link>
@@ -62,18 +64,26 @@ export default function Hero() {
 
             {/* Standing facts. Est. 2021 lives here as a credential rather than
                 floating above the headline. */}
+            {/* Value and label share a row on a phone — three stacked cells of
+                113px forced every label to wrap. Back to a column pair from sm
+                up, where there's width for it. */}
             <Reveal
               delay={0.26}
-              className="mt-10 grid max-w-lg grid-cols-3 gap-px border border-rule bg-rule"
+              className="mt-8 grid max-w-lg grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-3 md:mt-10"
             >
               {[
                 ["Est. 2021", "Independent"],
                 ["10+ yrs", "Shipping product"],
                 ["2 seats", "Open for Q3 2026"],
               ].map(([value, label]) => (
-                <div key={label} className="bg-bg px-4 py-4">
-                  <p className="display text-[clamp(0.95rem,1.5vw,1.3rem)]">{value}</p>
-                  <p className="label mt-2 leading-relaxed text-ink-40">{label}</p>
+                <div
+                  key={label}
+                  className="flex items-baseline justify-between gap-3 bg-bg px-4 py-3 sm:block sm:py-4"
+                >
+                  <p className="display text-[1.05rem] sm:text-[clamp(0.95rem,1.5vw,1.3rem)]">
+                    {value}
+                  </p>
+                  <p className="label text-ink-40 sm:mt-2">{label}</p>
                 </div>
               ))}
             </Reveal>
@@ -82,21 +92,28 @@ export default function Hero() {
           {/* ---- right: the perpetual value machine ---- */}
           <div className="lg:col-span-6">
             <div
-              className="relative h-[clamp(240px,38vh,460px)] w-full lg:h-[clamp(340px,54vh,560px)]"
+              className="relative -mx-[var(--pad)] h-[clamp(200px,30vh,300px)] w-[calc(100%+var(--pad)*2)] sm:mx-0 sm:h-[clamp(260px,38vh,460px)] sm:w-full lg:h-[clamp(340px,54vh,560px)]"
               aria-hidden
             >
               <ValueMachine />
             </div>
-            {/* Names what the loop is showing, so it argues rather than decorates. */}
-            <div className="mt-1 grid grid-cols-3 gap-4 border-t border-rule pt-4">
+            {/* Names what the loop is showing, so it argues rather than
+                decorates. Stacked as label/value rows on a phone; three
+                columns only once each one has room to breathe. */}
+            <div className="mt-1 divide-y divide-rule border-t border-rule sm:grid sm:grid-cols-3 sm:gap-4 sm:divide-y-0 sm:pt-4">
               {[
                 ["Capital in", "Budget, time, attention"],
                 ["The work", "Strategy through build"],
                 ["Product out", "Shipped, and compounding"],
               ].map(([head, sub]) => (
-                <div key={head}>
-                  <p className="label text-ink">{head}</p>
-                  <p className="mt-1.5 text-[11px] leading-snug text-ink-40">{sub}</p>
+                <div
+                  key={head}
+                  className="flex items-baseline justify-between gap-3 py-2.5 sm:block sm:py-0"
+                >
+                  <p className="label shrink-0 text-ink">{head}</p>
+                  <p className="text-right text-[12px] leading-snug text-ink-40 sm:mt-1.5 sm:text-left sm:text-[11px]">
+                    {sub}
+                  </p>
                 </div>
               ))}
             </div>
@@ -126,7 +143,7 @@ export default function Hero() {
           <p className="label text-ink-40">{site.tagline}</p>
           <a
             href="#impact"
-            className="group label flex items-center gap-2 text-ink transition-colors duration-300 hover:text-accent"
+            className="group label tap-target flex items-center gap-2 py-2 text-ink transition-colors duration-300 hover:text-accent"
           >
             Explore
             <span

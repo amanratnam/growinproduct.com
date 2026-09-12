@@ -32,12 +32,12 @@ function Ticker({ reverse = false, duration }: { reverse?: boolean; duration: nu
         {run.map((o, i) => (
           <div
             key={i}
-            className="group flex w-[clamp(180px,20vw,240px)] shrink-0 flex-col justify-between border border-rule bg-bg px-5 py-6 transition-colors duration-300 hover:border-accent"
+            className="group flex w-[min(52vw,240px)] shrink-0 flex-col justify-between border border-rule bg-bg px-4 py-5 transition-colors duration-300 hover:border-accent sm:w-[clamp(180px,20vw,240px)] sm:px-5 sm:py-6"
           >
-            <p className="display text-[clamp(1.6rem,3vw,2.6rem)] transition-colors duration-300 group-hover:text-accent">
+            <p className="display text-[1.75rem] transition-colors duration-300 group-hover:text-accent sm:text-[clamp(1.6rem,3vw,2.6rem)]">
               {o.value}
             </p>
-            <div className="mt-4">
+            <div className="mt-3.5 sm:mt-4">
               <p className="label text-ink">{o.label}</p>
               <p className="label mt-1.5 text-ink-40">{o.sector}</p>
             </div>

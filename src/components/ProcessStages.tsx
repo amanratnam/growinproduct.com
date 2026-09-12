@@ -135,27 +135,27 @@ export default function ProcessStages({ standalone = false }: { standalone?: boo
     <ol className="rule-t">
       {stages.map((stage, i) => (
         <li key={stage.name} className="rule-b">
-          <Reveal delay={i * 0.05} className="grid grid-cols-12 items-start gap-x-6 gap-y-6 py-9">
+          <Reveal delay={i * 0.05} className="grid grid-cols-12 items-start gap-x-5 gap-y-4 py-6 md:gap-x-6 md:gap-y-6 md:py-9">
             {/* number + name */}
-            <div className="col-span-12 md:col-span-3">
+            <div className="col-span-7 md:col-span-3">
               <span className="label text-ink-40">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="display mt-3 text-[clamp(1.4rem,3vw,2.2rem)]">{stage.name}</h3>
             </div>
 
             {/* the diagram carries the explanation */}
-            <div className="col-span-12 h-28 md:col-span-4 md:h-32">
+            <div className="col-span-5 h-20 self-center md:col-span-4 md:h-32 md:self-start">
               <StageArt index={i} />
             </div>
 
             <div className="col-span-12 md:col-span-3">
-              <p className="max-w-[38ch] text-sm leading-relaxed text-muted">{stage.desc}</p>
+              <p className="max-w-[38ch] text-[13px] leading-relaxed text-muted md:text-sm">{stage.desc}</p>
             </div>
 
             <div className="col-span-12 md:col-span-2">
               <p className="label text-ink-40">Outputs</p>
-              <ul className="mt-3 space-y-1.5">
+              <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 md:mt-3 md:block md:space-y-1.5">
                 {stage.outputs.map((o) => (
-                  <li key={o} className="text-sm text-ink">
+                  <li key={o} className="text-[13px] text-ink md:text-sm">
                     {o}
                   </li>
                 ))}

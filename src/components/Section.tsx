@@ -28,12 +28,12 @@ export default function Section({
       <div className="rule-t" />
 
       {/* meta rail, mirrors the case plate's top rail */}
-      <div className="flex items-center justify-between gap-4 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-3.5 md:py-4">
         <p className="label text-ink-40">{eyebrow}</p>
         {index && <p className="label text-ink-40">{index}</p>}
       </div>
 
-      <div className="grid gap-x-8 gap-y-10 md:grid-cols-12">
+      <div className="grid gap-x-8 gap-y-5 md:grid-cols-12 md:gap-y-10">
         <div className="md:col-span-7">
           <Reveal as="h2" className="display text-[clamp(2rem,5.6vw,4.6rem)]">
             {title}
@@ -52,7 +52,7 @@ export default function Section({
         )}
       </div>
 
-      {children && <div className="mt-[clamp(36px,6vh,72px)]">{children}</div>}
+      {children && <div className="mt-[clamp(28px,5vh,72px)]">{children}</div>}
     </section>
   );
 }

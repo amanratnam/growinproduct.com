@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main>
-      <section className="shell pb-[clamp(36px,6vh,72px)] pt-[clamp(40px,8vh,96px)]">
-        <div className="rule-b flex items-baseline justify-between gap-4 pb-4">
+      <section className="shell pb-[clamp(28px,5vh,72px)] pt-[clamp(24px,5vh,96px)]">
+        <div className="rule-b flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-3 md:pb-4">
           <p className="label text-ink-40">About</p>
           <p className="label text-ink-40">One operator</p>
         </div>

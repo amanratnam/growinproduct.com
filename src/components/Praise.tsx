@@ -17,15 +17,15 @@ function tierFor(quote: string): Tier {
 }
 
 const TIER_WIDTH: Record<Tier, string> = {
-  sm: "w-[clamp(200px,24vw,280px)]",
-  md: "w-[clamp(260px,30vw,380px)]",
-  lg: "w-[clamp(300px,36vw,460px)]",
+  sm: "w-[min(62vw,280px)] sm:w-[clamp(200px,24vw,280px)]",
+  md: "w-[min(76vw,380px)] sm:w-[clamp(260px,30vw,380px)]",
+  lg: "w-[min(82vw,460px)] sm:w-[clamp(300px,36vw,460px)]",
 };
 
 /* Short quotes get to be the loud ones — that's the keynote move: a handful of
    words set large, with the long testimonials as supporting body copy. */
 const TIER_TYPE: Record<Tier, string> = {
-  sm: "display text-[clamp(1.25rem,2.1vw,1.9rem)] leading-[1.05]",
+  sm: "display text-[1.4rem] leading-[1.05] sm:text-[clamp(1.25rem,2.1vw,1.9rem)]",
   md: "text-[15px] leading-relaxed",
   lg: "text-[14px] leading-relaxed",
 };
@@ -53,7 +53,7 @@ function Card({ review, clone = false }: { review: Review; clone?: boolean }) {
        heights to the tallest card in the rail. */
     <figure
       aria-hidden={clone}
-      className={`group flex shrink-0 flex-col justify-between rounded-2xl border border-rule p-6 transition-colors duration-300 hover:border-accent sm:p-7 ${TIER_WIDTH[tier]} ${
+      className={`group flex shrink-0 flex-col justify-between rounded-2xl border border-rule p-5 transition-colors duration-300 hover:border-accent sm:p-7 ${TIER_WIDTH[tier]} ${
         isFeature ? "bg-ink text-bg" : "bg-bg"
       }`}
     >
@@ -68,13 +68,13 @@ function Card({ review, clone = false }: { review: Review; clone?: boolean }) {
           min-h-0 — that would let the quote shrink below its own content and
           clip again. */}
       <blockquote
-        className={`mt-6 flex-1 ${TIER_TYPE[tier]} ${isFeature ? "text-bg" : "text-ink"}`}
+        className={`mt-5 flex-1 sm:mt-6 ${TIER_TYPE[tier]} ${isFeature ? "text-bg" : "text-ink"}`}
       >
         {review.quote}
       </blockquote>
 
       <figcaption
-        className={`label mt-6 border-t pt-4 ${
+        className={`label mt-5 border-t pt-3.5 sm:mt-6 sm:pt-4 ${
           isFeature ? "border-white/15 text-white/50" : "border-rule text-ink-40"
         }`}
       >

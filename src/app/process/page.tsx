@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 export default function ProcessPage() {
   return (
     <main>
-      <section className="shell pb-[clamp(36px,6vh,72px)] pt-[clamp(40px,8vh,96px)]">
-        <div className="rule-b flex items-baseline justify-between gap-4 pb-4">
+      <section className="shell pb-[clamp(28px,5vh,72px)] pt-[clamp(24px,5vh,96px)]">
+        <div className="rule-b flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-3 md:pb-4">
           <p className="label text-ink-40">How the work runs</p>
           <p className="label text-ink-40">
             {String(stages.length).padStart(2, "0")} stages
@@ -47,7 +47,7 @@ export default function ProcessPage() {
           <h2 className="display max-w-[18ch] text-[clamp(1.8rem,4.6vw,3.6rem)]">
             See where the road ends
           </h2>
-          <div className="flex shrink-0 flex-wrap gap-3">
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
             <Link href="/projects" className="pill">
               View the work
             </Link>

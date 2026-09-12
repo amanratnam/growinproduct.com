@@ -31,13 +31,13 @@ export default function AboutBlock() {
       </section>
 
       {/* someone walks the whole width, carrying a spec */}
-      <div className="char-strip h-16 border-y border-rule">
+      <div className="char-strip h-12 border-y border-rule sm:h-16">
         <Walker duration={38} />
         <Walker accent duration={46} delay={-14} />
       </div>
 
       {/* ------------------------------------------------------- timeline -- */}
-      <section className="shell py-[clamp(48px,8vh,96px)]">
+      <section className="shell py-[clamp(36px,6vh,96px)]">
         <div className="flex items-center justify-between gap-4 pb-6">
           <p className="label text-ink-40">Track record</p>
           <p className="label text-ink-40">{timeline.length} chapters</p>
@@ -54,7 +54,7 @@ export default function AboutBlock() {
           <ol className="md:col-span-11 rule-t">
             {timeline.map((entry, i) => (
               <li key={entry.title} className="rule-b">
-                <Reveal delay={i * 0.05} className="grid grid-cols-12 gap-x-4 py-7">
+                <Reveal delay={i * 0.05} className="grid grid-cols-12 gap-x-4 py-5 md:py-7">
                   <p className="label col-span-12 text-accent md:col-span-3">{entry.period}</p>
                   <div className="col-span-12 mt-2 md:col-span-9 md:mt-0">
                     <h3 className="display text-[clamp(1.1rem,2.2vw,1.7rem)]">{entry.title}</h3>
@@ -68,13 +68,13 @@ export default function AboutBlock() {
       </section>
 
       {/* the roadmap gets pushed along */}
-      <div className="char-strip h-16 border-y border-rule">
+      <div className="char-strip h-12 border-y border-rule sm:h-16">
         <Pusher duration={30} />
         <Walker duration={44} delay={-20} reverse />
       </div>
 
       {/* ------------------------------------------------------ expertise -- */}
-      <section className="shell py-[clamp(48px,8vh,96px)]">
+      <section className="shell py-[clamp(36px,6vh,96px)]">
         <div className="grid gap-x-8 gap-y-10 md:grid-cols-12">
           <div className="md:col-span-4">
             <p className="label text-ink-40">Expertise</p>
@@ -90,7 +90,7 @@ export default function AboutBlock() {
                 <li key={skill} className="bg-bg">
                   <Reveal
                     delay={i * 0.02}
-                    className="px-4 py-5 text-sm text-ink transition-colors duration-300 hover:text-accent"
+                    className="px-3.5 py-4 text-[13px] text-ink transition-colors duration-300 hover:text-accent sm:px-4 sm:py-5 sm:text-sm"
                   >
                     {skill}
                   </Reveal>

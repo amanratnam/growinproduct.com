@@ -31,7 +31,7 @@
   --stroke: 1px;
 
   /* ---- vertical rhythm ---- */
-  --block: clamp(72px, 11vh, 140px); /* space between major blocks */
+  --block: clamp(56px, 9vh, 140px); /* space between major blocks */
 
   /* ---- motion ---- */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -135,11 +135,21 @@ html.lenis body {
 /* The micro-label used everywhere: section eyebrows, meta rows, table heads.
    One definition means they can never drift apart. */
 .label {
-  font-size: clamp(0.58rem, 0.7vw, 0.7rem);
+  /* The lower bound is a legibility floor, not a design preference: the old
+     0.58rem resolved to 9.3px on a 375px screen, which is below what uppercase
+     tracked text can carry. Tracking tightens with it, since wide letter
+     spacing costs more at small sizes on a phone. */
+  font-size: clamp(0.6875rem, 0.7vw, 0.7rem);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  line-height: 1;
+  line-height: 1.25;
+}
+@media (min-width: 768px) {
+  .label {
+    letter-spacing: 0.14em;
+    line-height: 1;
+  }
 }
 
 .prose-lead {
@@ -294,6 +304,11 @@ html.lenis body {
 .pill:active {
   scale: 0.94;
 }
+@media (pointer: coarse) {
+  .pill {
+    min-height: 44px;
+  }
+}
 .pill--solid {
   color: var(--bg);
   background: var(--ink);
@@ -311,6 +326,23 @@ html.lenis body {
   color: var(--ink);
   background: var(--bg);
   border-color: var(--bg);
+}
+
+/* Coarse pointers need a 44px target regardless of how big the ink is. The
+   pseudo-element grows the hit area without disturbing layout. */
+@media (pointer: coarse) {
+  .tap-target {
+    position: relative;
+  }
+  .tap-target::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* Link that underlines from the left on hover. */

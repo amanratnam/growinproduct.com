@@ -60,12 +60,14 @@ export default function SiteHeader() {
         className="site-header fixed inset-x-0 top-0 z-50 bg-bg/90 backdrop-blur-md transition-colors duration-300"
         style={{ minHeight: "var(--header-h)" }}
       >
-        <div
-          className="shell grid h-[var(--header-h)] items-center gap-4"
-          style={{ gridTemplateColumns: "1fr auto 1fr" }}
-        >
+        {/* Flex on phones, three-column grid from md up. The grid can't be used
+            at both sizes: the centre nav is display:none on mobile, so it
+            leaves the grid flow entirely and the right-hand group falls into
+            column 2 — leaving a dead column at the right edge and the menu
+            button stranded mid-bar. */}
+        <div className="shell flex h-[var(--header-h)] items-center justify-between gap-3 md:grid md:gap-4 md:[grid-template-columns:1fr_auto_1fr]">
           {/* left: mark + standing line */}
-          <Link href="/" aria-label={`${site.name}, home`} className="group flex items-center gap-3">
+          <Link href="/" aria-label={`${site.name}, home`} className="group tap-target flex min-w-0 shrink items-center gap-3 py-2">
             <Image
               src="/logo-mark.png"
               alt=""
@@ -74,7 +76,7 @@ export default function SiteHeader() {
               priority
               className="header-mark h-7 w-7 transition-transform duration-500 group-hover:rotate-[-8deg] md:h-8 md:w-8"
             />
-            <span className="label hidden opacity-60 transition-colors duration-300 group-hover:text-accent group-hover:opacity-100 lg:inline">
+            <span className="label hidden whitespace-nowrap opacity-60 transition-colors duration-300 group-hover:text-accent group-hover:opacity-100 xl:inline">
               {site.location}
             </span>
           </Link>
@@ -106,7 +108,7 @@ export default function SiteHeader() {
             <Link
               href="/contact"
               aria-current={contactActive ? "page" : undefined}
-              className={`header-cta pill !min-h-0 !px-4 !py-2.5 !text-[0.68rem] ${
+              className={`header-cta pill tap-target !min-h-9 shrink-0 !px-3.5 !py-2 !text-[0.66rem] sm:!px-4 sm:!text-[0.68rem] ${
                 contactActive ? "pill--solid" : ""
               }`}
             >
@@ -119,7 +121,7 @@ export default function SiteHeader() {
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Close menu" : "Open menu"}
-              className="relative flex h-8 w-8 flex-col items-center justify-center gap-[5px] md:hidden"
+              className="-mr-2.5 flex h-11 w-11 shrink-0 flex-col items-center justify-center gap-[5px] md:hidden"
             >
               <span
                 className={`h-px w-5 bg-current transition-transform duration-300 ${
@@ -143,7 +145,7 @@ export default function SiteHeader() {
       <div
         id="mobile-menu"
         hidden={!open}
-        className="fixed inset-0 z-40 bg-bg pt-[var(--header-h)] md:hidden"
+        className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-bg pt-[var(--header-h)] pb-10 md:hidden"
       >
         <nav aria-label="Primary, mobile" className="shell pt-6">
           <ul>
@@ -152,10 +154,10 @@ export default function SiteHeader() {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex items-baseline gap-4 py-4"
+                  className="flex items-baseline gap-4 py-3.5"
                 >
                   <span className="label text-ink-40">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="display text-[11vw] leading-none">{item.label}</span>
+                  <span className="display text-[clamp(1.9rem,10vw,2.8rem)] leading-none">{item.label}</span>
                 </Link>
               </li>
             ))}
@@ -168,7 +170,7 @@ export default function SiteHeader() {
             Let&apos;s talk
           </Link>
           <p className="label mt-6 text-ink-40">{site.availability}</p>
-          <a href={`mailto:${site.email}`} className="ulink mt-3 block text-sm text-muted">
+          <a href={`mailto:${site.email}`} className="ulink tap-target mt-2 inline-block py-2 text-sm text-muted">
             {site.email}
           </a>
         </nav>
