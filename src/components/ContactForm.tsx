@@ -1,163 +1,213 @@
 "use client";
 
 import { useState } from "react";
-import Reveal from "./Reveal";
-import { contactRows, site } from "@/lib/content";
+import { services, site } from "@/lib/content";
 
-/* Field styled as a ruled line rather than a box, so the form sits on the same
-   hairline system as every other section. */
-function Field({
-  name,
-  label,
-  type = "text",
-  required = false,
-  textarea = false,
-  placeholder,
-}: {
-  name: string;
-  label: string;
-  type?: string;
-  required?: boolean;
-  textarea?: boolean;
-  placeholder?: string;
-}) {
-  const shared =
-    "w-full border-0 border-b border-rule bg-transparent pb-3 pt-2 text-base text-ink outline-none transition-colors duration-300 placeholder:text-ink-20 focus:border-accent";
+type Status = "idle" | "sending" | "sent" | "error";
+
+export default function ContactForm() {
+  const [status, setStatus] = useState<Status>("idle");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [message, setMessage] = useState("");
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    setStatus("sending");
+    setErrors({});
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const payload = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setStatus("sent");
+        form.reset();
+        return;
+      }
+      if (res.status === 422 && payload.errors) {
+        setErrors(payload.errors);
+        setStatus("idle");
+        return;
+      }
+      setStatus("error");
+      setMessage(payload.error || "Something went wrong. Please email directly.");
+    } catch {
+      setStatus("error");
+      setMessage("Couldn't reach the server. Please email directly.");
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div className="glass p-8 text-center sm:p-12">
+        <p className="label text-accent">Message sent</p>
+        <h2 className="display mt-4 text-[clamp(1.6rem,3.4vw,2.6rem)]">
+          Thanks &mdash; I&apos;ll be in touch
+        </h2>
+        <p className="mx-auto mt-4 max-w-[38ch] leading-relaxed text-muted">
+          It lands in my inbox directly, and the reply comes from me. Usually the
+          same day.
+        </p>
+        <button
+          type="button"
+          onClick={() => setStatus("idle")}
+          className="pill mt-8"
+        >
+          Send another
+        </button>
+      </div>
+    );
+  }
 
   return (
-    /* Baseline alignment pairs a one-line label with a one-line input, but a
-       textarea's first baseline sits far below its top edge, so those rows
-       align to the top instead. */
-    <div
-      className={`grid grid-cols-12 gap-x-4 gap-y-2 py-5 ${
-        textarea ? "items-start" : "items-baseline"
-      }`}
-    >
-      <label
-        htmlFor={name}
-        className={`label col-span-12 text-ink-40 md:col-span-3 ${textarea ? "md:pt-3" : ""}`}
-      >
-        {label}
-        {required && <span className="text-accent"> *</span>}
-      </label>
-      <div className="col-span-12 md:col-span-9">
-        {textarea ? (
-          <textarea
-            id={name}
-            name={name}
-            rows={4}
-            required={required}
-            placeholder={placeholder}
-            className={`${shared} resize-none`}
-          />
-        ) : (
-          <input
-            id={name}
-            name={name}
-            type={type}
-            required={required}
-            placeholder={placeholder}
-            className={shared}
-          />
-        )}
+    <form onSubmit={onSubmit} className="glass p-6 sm:p-10" noValidate>
+      <div className="flex items-baseline justify-between gap-4">
+        <p className="label text-ink-40">Start a conversation</p>
+        <p className="label flex items-center gap-2 text-ink-40">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+          {site.availability}
+        </p>
       </div>
-    </div>
+
+      <div className="mt-7 grid gap-5 sm:grid-cols-2">
+        <Field
+          label="Your name"
+          name="name"
+          required
+          placeholder="Jane Doe"
+          error={errors.name}
+        />
+        <Field
+          label="Company"
+          name="company"
+          placeholder="Optional"
+          error={errors.company}
+        />
+      </div>
+
+      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+        <Field
+          label="Email"
+          name="email"
+          type="email"
+          required
+          placeholder="jane@company.com"
+          error={errors.email}
+        />
+        <div>
+          <label htmlFor="service" className="label block text-ink-40">
+            Service <span className="text-accent">*</span>
+          </label>
+          <select
+            id="service"
+            name="service"
+            required
+            defaultValue=""
+            className="glass-field mt-2.5"
+            aria-invalid={Boolean(errors.service)}
+          >
+            <option value="" disabled>
+              Select a service
+            </option>
+            {services.map((s) => (
+              <option key={s.id} value={s.title}>
+                {s.title}
+              </option>
+            ))}
+          </select>
+          {errors.service && <Err>{errors.service}</Err>}
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <label htmlFor="problem" className="label block text-ink-40">
+          Problem statement <span className="text-accent">*</span>
+        </label>
+        <textarea
+          id="problem"
+          name="problem"
+          rows={5}
+          required
+          placeholder="What's fuzzy? Half-formed is fine — that's usually where the useful work is."
+          className="glass-field mt-2.5 resize-none"
+          aria-invalid={Boolean(errors.problem)}
+        />
+        {errors.problem && <Err>{errors.problem}</Err>}
+      </div>
+
+      {/* honeypot: hidden from people, irresistible to bots */}
+      <div className="absolute h-0 w-0 overflow-hidden" aria-hidden>
+        <label htmlFor="website">Leave this empty</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      <div className="mt-8 flex flex-wrap items-center gap-4">
+        <button type="submit" className="pill pill--solid" disabled={status === "sending"}>
+          {status === "sending" ? "Sending…" : "Send it over"}
+          {status !== "sending" && <span aria-hidden>&rarr;</span>}
+        </button>
+        <p className="text-xs leading-relaxed text-ink-40">
+          Or email{" "}
+          <a href={`mailto:${site.email}`} className="ulink text-ink">
+            {site.email}
+          </a>
+        </p>
+      </div>
+
+      <p
+        role="status"
+        aria-live="polite"
+        className={`mt-4 text-sm ${status === "error" ? "text-accent" : "sr-only"}`}
+      >
+        {message}
+      </p>
+    </form>
   );
 }
 
-export default function ContactForm() {
-  const [copied, setCopied] = useState(false);
+function Err({ children }: { children: React.ReactNode }) {
+  return <p className="mt-2 text-xs text-accent">{children}</p>;
+}
 
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(site.email);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* clipboard blocked; the mailto link still works */
-    }
-  };
-
-  /* No backend on this site, so the form composes a mailto. Stated plainly
-     below the button rather than surprising the visitor. */
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const name = String(data.get("name") || "");
-    const company = String(data.get("company") || "");
-    const message = String(data.get("message") || "");
-
-    const subject = encodeURIComponent(
-      `New enquiry${name ? ` from ${name}` : ""}${company ? ` · ${company}` : ""}`
-    );
-    const body = encodeURIComponent(`${message}\n\n— ${name}${company ? `, ${company}` : ""}`);
-    window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
-  };
-
+function Field({
+  label,
+  name,
+  type = "text",
+  required = false,
+  placeholder,
+  error,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+  error?: string;
+}) {
   return (
-    <div className="grid gap-x-8 gap-y-14 md:grid-cols-12">
-      {/* left: the terms of the conversation */}
-      <div className="md:col-span-4">
-        <p className="label text-ink-40">The invitation</p>
-        <dl className="mt-6 rule-t">
-          {contactRows.map(([term, detail], i) => (
-            <div key={term} className="rule-b">
-              <Reveal delay={i * 0.05} className="py-5">
-                <dt className="label text-accent">{term}</dt>
-                <dd className="mt-2 max-w-[34ch] text-sm leading-relaxed text-ink">{detail}</dd>
-              </Reveal>
-            </div>
-          ))}
-        </dl>
-
-        <div className="mt-8">
-          <p className="label text-ink-40">Prefer email</p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <a href={`mailto:${site.email}`} className="ulink text-sm text-ink">
-              {site.email}
-            </a>
-            <button
-              type="button"
-              onClick={copyEmail}
-              className="label text-ink-40 transition-colors duration-300 hover:text-accent"
-            >
-              {copied ? "Copied" : "Copy"}
-            </button>
-          </div>
-          <p className="label mt-6 flex items-center gap-2 text-ink-40">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-            {site.availability}
-          </p>
-        </div>
-      </div>
-
-      {/* right: the form itself */}
-      <form onSubmit={onSubmit} className="md:col-span-8">
-        <div className="rule-t">
-          <Field name="name" label="Your name" required placeholder="Jane Doe" />
-          <div className="rule-t" />
-          <Field name="company" label="Company" placeholder="Optional" />
-          <div className="rule-t" />
-          <Field
-            name="message"
-            label="The problem"
-            textarea
-            required
-            placeholder="Tell me what's fuzzy. Half-formed is fine."
-          />
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <button type="submit" className="pill pill--solid">
-            Send it over
-            <span aria-hidden>→</span>
-          </button>
-          <p className="max-w-[36ch] text-xs leading-relaxed text-ink-40">
-            This opens your email client with the message drafted. Nothing is
-            stored or sent anywhere else.
-          </p>
-        </div>
-      </form>
+    <div>
+      <label htmlFor={name} className="label block text-ink-40">
+        {label}
+        {required && <span className="text-accent"> *</span>}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        className="glass-field mt-2.5"
+        aria-invalid={Boolean(error)}
+      />
+      {error && <Err>{error}</Err>}
     </div>
   );
 }

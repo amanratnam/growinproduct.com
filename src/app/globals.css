@@ -391,6 +391,460 @@ html.lenis body {
   }
 }
 
+/* --------------------------------------------------------- liquid glass -- */
+
+/* The contact card. The "light bending" at the edges is three layers:
+   a backdrop blur+saturate for the refraction through the pane, an inset
+   highlight ring that catches light on the top-left and shadow on the
+   bottom-right, and a soft specular sweep across the surface. */
+.glass {
+  position: relative;
+  isolation: isolate;
+  border-radius: 28px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.44) 48%,
+    rgba(255, 255, 255, 0.62) 100%
+  );
+  backdrop-filter: blur(26px) saturate(165%);
+  -webkit-backdrop-filter: blur(26px) saturate(165%);
+  box-shadow:
+    /* the bent-light rim */
+    inset 1px 1px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(10, 10, 10, 0.06),
+    /* thickness of the pane */
+    inset 0 0 40px rgba(255, 255, 255, 0.35),
+    /* cast shadow, so it floats rather than sits */
+    0 30px 70px -30px rgba(10, 10, 10, 0.3),
+    0 4px 14px -6px rgba(10, 10, 10, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* specular sweep: a slow highlight travelling across the pane */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 42%,
+    rgba(255, 255, 255, 0.18) 52%,
+    transparent 72%
+  );
+  background-size: 260% 100%;
+  animation: glass-sweep 9s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glass-sweep {
+  0%,
+  100% {
+    background-position: 130% 0;
+  }
+  50% {
+    background-position: -30% 0;
+  }
+}
+
+/* corner refraction: brighter, tighter light right at the radii */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 130deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.15) 25%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.12) 75%,
+    rgba(255, 255, 255, 0.95)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* form controls inside the pane read as etched into the glass */
+.glass-field {
+  width: 100%;
+  border: 1px solid rgba(10, 10, 10, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+  outline: none;
+  transition:
+    border-color 0.25s var(--ease),
+    background-color 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
+}
+.glass-field::placeholder {
+  color: rgba(10, 10, 10, 0.32);
+}
+.glass-field:hover {
+  background: rgba(255, 255, 255, 0.72);
+}
+.glass-field:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(216, 30, 32, 0.12);
+}
+select.glass-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230a0a0a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass::before {
+    animation: none;
+  }
+}
+
+/* -------------------------------------------------------- work diagrams -- */
+
+/* One-shot entrance, applied only once the card is in view. */
+.wa-fade {
+  opacity: 0;
+}
+.wa-fade.wa-on {
+  animation: pa-fade 0.6s var(--ease) forwards;
+}
+.wa-slide {
+  opacity: 0;
+}
+.wa-slide.wa-on {
+  animation: wa-slide 0.7s var(--ease) forwards;
+}
+@keyframes wa-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.wa-draw {
+  stroke-dasharray: 520;
+  stroke-dashoffset: 520;
+}
+.wa-draw.wa-on {
+  animation: pa-draw 1.5s var(--ease) 0.25s forwards;
+}
+/* ambient loops keep a card alive after its entrance has finished */
+.wa-ring {
+  transform-origin: 160px 100px;
+  animation: wa-ring 3.4s ease-out infinite;
+}
+@keyframes wa-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+.wa-pulse {
+  animation: wa-pulse 1.8s ease-in-out infinite alternate;
+}
+@keyframes wa-pulse {
+  to {
+    r: 6.5;
+  }
+}
+
+/* ----------------------------------------------------- process diagrams -- */
+
+.pa-fade {
+  opacity: 0;
+  animation: pa-fade 0.7s var(--ease) forwards;
+}
+@keyframes pa-fade {
+  to {
+    opacity: 1;
+  }
+}
+.pa-grow {
+  opacity: 0;
+  animation: pa-grow 0.7s var(--ease) forwards;
+}
+@keyframes pa-grow {
+  from {
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+.pa-draw {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: pa-draw 1.4s var(--ease) 0.3s forwards;
+}
+@keyframes pa-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.pa-num {
+  opacity: 0;
+  animation: pa-fade 0.6s var(--ease) 0.5s forwards;
+}
+
+/* ------------------------------------------------------- keyword field ---- */
+
+/* Perspective container for the contact page's word cloud. */
+.kw-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 900px;
+  perspective-origin: 50% 50%;
+}
+
+/* Soft colour fields behind everything. Glass has nothing to refract on a flat
+   white page — these give the pane something to blur and bend, which is what
+   makes the effect read at all. */
+.kw-scene::before,
+.kw-scene::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+.kw-scene::before {
+  width: 58vw;
+  height: 58vw;
+  left: -12vw;
+  top: 4vh;
+  background: radial-gradient(
+    circle,
+    rgba(216, 30, 32, 0.16) 0%,
+    rgba(216, 30, 32, 0.05) 45%,
+    transparent 70%
+  );
+  animation: kw-blob 22s ease-in-out infinite alternate;
+}
+.kw-scene::after {
+  width: 52vw;
+  height: 52vw;
+  right: -10vw;
+  bottom: -6vh;
+  background: radial-gradient(
+    circle,
+    rgba(10, 10, 10, 0.14) 0%,
+    rgba(10, 10, 10, 0.04) 45%,
+    transparent 70%
+  );
+  animation: kw-blob 28s ease-in-out infinite alternate-reverse;
+}
+@keyframes kw-blob {
+  to {
+    transform: translate3d(6vw, -4vh, 0) scale(1.12);
+  }
+}
+
+.kw-field {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  /* whole-field tilt follows the pointer */
+  transform: rotateY(calc(var(--px, 0) * 7deg)) rotateX(calc(var(--py, 0) * -5deg));
+  transition: transform 0.1s linear;
+}
+
+.kw-word {
+  position: absolute;
+  /* Placement goes through left/top, not translate: a percentage inside
+     translate() resolves against the element's own box, so every word would
+     land within a few pixels of the centre regardless of its coordinates. */
+  left: calc(50% + var(--x));
+  top: calc(50% + var(--y));
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: calc(var(--size, 1) * clamp(0.85rem, 1.5vw, 1.6rem));
+  color: var(--ink);
+  /* far words fade back, near words sit forward */
+  opacity: calc(0.06 + var(--depth, 0.5) * 0.15);
+  transform-style: preserve-3d;
+  transform: translate3d(
+      calc(-50% + (var(--px, 0) * var(--depth, 0.5) * 44px)),
+      calc(-50% + (var(--py, 0) * var(--depth, 0.5) * 34px)),
+      var(--z)
+    );
+  animation: kw-drift var(--drift, 18s) ease-in-out infinite alternate;
+  animation-delay: var(--drift-delay, 0s);
+  will-change: transform;
+}
+
+/* every other word picks up the accent, so the field isn't uniform grey */
+.kw-word:nth-child(4n + 2) {
+  color: var(--accent);
+  opacity: calc(0.06 + var(--depth, 0.5) * 0.2);
+}
+
+@keyframes kw-drift {
+  to {
+    /* a slow independent bob layered on top of the pointer parallax */
+    margin-top: -14px;
+  }
+}
+
+/* --------------------------------------------------------- characters ---- */
+
+/* Inhabitants that live in their own strip of the layout. Each sits in a
+   full-bleed track and crosses it on a loop. */
+.char-strip {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.char-walk {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  animation: char-cross var(--char-dur, 34s) linear infinite;
+  animation-delay: var(--char-delay, 0s);
+  animation-direction: var(--char-dir, normal);
+  will-change: transform;
+}
+@keyframes char-cross {
+  from {
+    transform: translateX(-12vw);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+/* a small vertical bounce so the walk doesn't glide */
+.char-bob {
+  animation: char-bob 0.62s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+@keyframes char-bob {
+  to {
+    transform: translateY(-1.6px);
+  }
+}
+
+.char-leg {
+  transform-origin: top center;
+  animation: char-step 0.62s ease-in-out infinite alternate;
+}
+.char-leg--b {
+  animation-direction: alternate-reverse;
+}
+@keyframes char-step {
+  from {
+    transform: rotate(-16deg);
+  }
+  to {
+    transform: rotate(16deg);
+  }
+}
+
+/* the pushed block gives a touch, so it reads as resistance */
+.char-push {
+  animation: char-push 0.62s ease-in-out infinite alternate;
+}
+@keyframes char-push {
+  to {
+    transform: translateX(1.4px);
+  }
+}
+
+/* ladder climb: up the rails, then reset out of sight */
+.char-ladder {
+  position: absolute;
+  pointer-events: none;
+}
+.char-climb {
+  animation: char-climb var(--char-dur, 16s) linear infinite;
+  will-change: transform;
+}
+@keyframes char-climb {
+  0% {
+    transform: translateY(196px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+}
+
+.char-standup {
+  pointer-events: none;
+}
+.char-point {
+  transform-origin: 17px 16px;
+  animation: char-point 2.6s ease-in-out infinite alternate;
+}
+@keyframes char-point {
+  to {
+    transform: rotate(-9deg);
+  }
+}
+.char-nod {
+  transform-origin: 12px 20px;
+  animation: char-nod 1.9s ease-in-out infinite alternate;
+}
+@keyframes char-nod {
+  to {
+    transform: rotate(5deg);
+  }
+}
+.char-chart {
+  stroke-dasharray: 120;
+  animation: char-chart 5s ease-in-out infinite;
+}
+@keyframes char-chart {
+  0% {
+    stroke-dashoffset: 120;
+  }
+  45%,
+  80% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 120;
+  }
+}
+
 /* ------------------------------------------------------------ marquee ---- */
 
 .marquee {
@@ -408,6 +862,18 @@ html.lenis body {
 }
 .marquee:hover .marquee__track {
   animation-play-state: paused;
+}
+
+/* Card rails. The plain marquee keeps its row on one line, but cards carry
+   real prose: nowrap has to be undone inside them or every quote renders as a
+   single line running off its box. Stretch is set here rather than with a
+   utility class, because unlayered CSS beats Tailwind's layered utilities and
+   `align-items: center` above would otherwise win. */
+.marquee--cards .marquee__track {
+  align-items: stretch;
+}
+.marquee--cards .marquee__track > * {
+  white-space: normal;
 }
 @keyframes marquee {
   to {
@@ -529,6 +995,15 @@ html.lenis body {
   }
   .reveal-line > * {
     transform: none;
+  }
+  .char-strip,
+  .char-ladder {
+    display: none;
+  }
+  .kw-word,
+  .kw-scene::before,
+  .kw-scene::after {
+    animation: none;
   }
   .case-section {
     height: auto;
