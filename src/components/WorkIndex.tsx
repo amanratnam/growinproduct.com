@@ -213,7 +213,7 @@ function CaseCard({ item, index, total }: { item: Case; index: number; total: nu
       ref={ref}
       data-theme={item.theme}
       aria-label={`Case ${index + 1}: ${item.title.join(" ")}`}
-      className="rule-b py-[clamp(48px,8vh,104px)]"
+      className="rule-b py-[clamp(36px,6vh,104px)]"
     >
       {/* meta rail */}
       <div className="flex items-baseline justify-between gap-4">
@@ -252,11 +252,18 @@ function CaseCard({ item, index, total }: { item: Case; index: number; total: nu
           <p className="mt-4 max-w-[52ch] text-sm leading-relaxed text-muted">{item.body}</p>
 
           {/* outcome figures */}
-          <dl className="mt-8 grid grid-cols-3 gap-px border border-rule bg-rule">
+          {/* Label and figure share a row on a phone; three columns only once
+              there's width for them. */}
+          <dl className="mt-8 grid grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-3">
             {item.stats.map(([value, label]) => (
-              <div key={label} className="bg-bg px-4 py-5">
-                <dd className="display text-[clamp(1.1rem,2vw,1.7rem)]">{value}</dd>
-                <dt className="label mt-2 leading-relaxed text-ink-40">{label}</dt>
+              <div
+                key={label}
+                className="flex items-baseline justify-between gap-3 bg-bg px-4 py-3 sm:block sm:py-5"
+              >
+                <dd className="display order-2 text-[1.1rem] sm:order-none sm:text-[clamp(1.1rem,2vw,1.7rem)]">
+                  {value}
+                </dd>
+                <dt className="label order-1 text-ink-40 sm:order-none sm:mt-2">{label}</dt>
               </div>
             ))}
           </dl>
@@ -271,24 +278,24 @@ function CaseCard({ item, index, total }: { item: Case; index: number; total: nu
               <span />
               <span />
             </span>
-            <div className="h-[clamp(200px,30vh,300px)] w-full p-5">
+            <div className="h-[clamp(180px,26vh,300px)] w-full p-3 sm:p-5">
               <CaseArt index={index} live={live} />
             </div>
           </div>
 
-          <table className="mt-px w-full border-collapse border border-rule text-sm">
+          <table className="mt-px w-full table-fixed border-collapse border border-rule text-[13px] sm:text-sm">
             <caption className="sr-only">
               Before and after for {item.title.join(" ")}
             </caption>
             <thead>
               <tr className="border-b border-rule">
-                <th scope="col" className="label px-4 py-3 text-left text-ink-40">
+                <th scope="col" className="label px-2.5 py-2.5 text-left text-ink-40 sm:px-4 sm:py-3">
                   Measure
                 </th>
-                <th scope="col" className="label px-4 py-3 text-left text-ink-40">
+                <th scope="col" className="label px-2.5 py-2.5 text-left text-ink-40 sm:px-4 sm:py-3">
                   Before
                 </th>
-                <th scope="col" className="label px-4 py-3 text-left text-accent">
+                <th scope="col" className="label px-2.5 py-2.5 text-left text-accent sm:px-4 sm:py-3">
                   After
                 </th>
               </tr>
@@ -296,13 +303,13 @@ function CaseCard({ item, index, total }: { item: Case; index: number; total: nu
             <tbody>
               {rows.map((row) => (
                 <tr key={row.label} className="border-b border-rule last:border-0">
-                  <th scope="row" className="px-4 py-3 text-left font-medium text-ink">
+                  <th scope="row" className="px-2.5 py-2.5 text-left font-medium text-ink sm:px-4 sm:py-3">
                     {row.label}
                   </th>
-                  <td className="px-4 py-3 text-muted line-through decoration-ink-20">
+                  <td className="px-2.5 py-2.5 text-muted line-through decoration-ink-20 sm:px-4 sm:py-3">
                     {row.before}
                   </td>
-                  <td className="px-4 py-3 font-semibold text-ink">{row.after}</td>
+                  <td className="px-2.5 py-2.5 font-semibold text-ink sm:px-4 sm:py-3">{row.after}</td>
                 </tr>
               ))}
             </tbody>

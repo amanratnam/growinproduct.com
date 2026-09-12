@@ -38,7 +38,7 @@ export default function ServiceIndex() {
                   onMouseEnter={() => setOpen(i)}
                   onFocus={() => setOpen(i)}
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="group grid w-full grid-cols-12 items-baseline gap-x-4 py-5 text-left transition-colors duration-300 md:py-7"
+                  className="group grid w-full grid-cols-12 items-baseline gap-x-3 py-4 text-left transition-colors duration-300 md:gap-x-4 md:py-7"
                 >
                   <span className="label col-span-2 text-ink-40 transition-colors duration-300 group-hover:text-accent md:col-span-1">
                     {String(i + 1).padStart(2, "0")}
@@ -52,7 +52,7 @@ export default function ServiceIndex() {
                     {service.title}
                   </span>
 
-                  <span className="col-span-12 mt-2 text-sm leading-relaxed text-muted md:col-span-4 md:mt-0">
+                  <span className="col-span-12 mt-2.5 pl-[calc(16.666%)] text-[13px] leading-relaxed text-muted md:col-span-4 md:mt-0 md:pl-0 md:text-sm">
                     {service.summary}
                   </span>
 
@@ -75,10 +75,10 @@ export default function ServiceIndex() {
                 >
                   <div className="overflow-hidden">
                     <div className="grid grid-cols-12 gap-x-4 gap-y-4 pb-7 md:pb-9">
-                      <div className="col-span-12 md:col-start-2 md:col-span-6">
+                      <div className="col-span-12 pl-[calc(16.666%)] md:col-start-2 md:col-span-6 md:pl-0">
                         <p className="max-w-[54ch] leading-relaxed text-ink">{service.detail}</p>
                       </div>
-                      <div className="col-span-12 md:col-span-4">
+                      <div className="col-span-12 pl-[calc(16.666%)] md:col-span-4 md:pl-0">
                         <p className="label text-ink-40">Deliverables</p>
                         <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
                           {service.deliverables.map((d) => (

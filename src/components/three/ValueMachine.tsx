@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { Canvas, useFrame, type ThreeElements } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, type ThreeElements } from "@react-three/fiber";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 
@@ -314,6 +314,30 @@ function Workshop() {
 
 /* ----------------------------------------------------------------- scene -- */
 
+/* Keeps the whole belt inside frame regardless of the canvas aspect. The hero
+   column is wide on a desktop and close to square on a phone, and a fixed
+   camera distance clips the ends of the run at the narrow end. */
+function FitCamera() {
+  const { camera, size } = useThree();
+
+  useEffect(() => {
+    const aspect = size.width / Math.max(size.height, 1);
+    const perspective = camera as THREE.PerspectiveCamera;
+    /* Distance needed to fit SCENE_WIDTH horizontally at this aspect. */
+    const SCENE_WIDTH = 11;
+    const vFov = (perspective.fov * Math.PI) / 180;
+    const needed = SCENE_WIDTH / (2 * aspect * Math.tan(vFov / 2));
+    /* Hold the isometric direction; only the distance along it changes. */
+    const dir = new THREE.Vector3(0.55, 0.41, 0.78).normalize();
+    const dist = Math.max(needed, 9);
+    camera.position.copy(dir.multiplyScalar(dist));
+    camera.lookAt(0, -0.2, 0);
+    perspective.updateProjectionMatrix();
+  }, [camera, size]);
+
+  return null;
+}
+
 function Scene({ reduced }: { reduced: boolean }) {
   const rig = useRef<THREE.Group>(null);
   const smoothed = useRef({ x: 0, y: 0 });
@@ -416,6 +440,7 @@ export default function ValueMachine() {
       />
       {/* cool fill from behind, to keep the shadow side from going muddy */}
       <directionalLight position={[-7, 4, -5]} intensity={0.55} color="#dfe4ee" />
+      <FitCamera />
       <Scene reduced={reduced} />
     </Canvas>
   );

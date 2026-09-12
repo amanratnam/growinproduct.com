@@ -60,11 +60,11 @@ export default function SiteFooter() {
 
   return (
     <div className="relative">
-      <div ref={spacerRef} className="h-[min(72svh,620px)]" aria-hidden />
+      <div ref={spacerRef} className="h-[min(88svh,560px)] md:h-[min(72svh,620px)]" aria-hidden />
 
       <footer
         ref={plateRef}
-        className="fixed inset-x-0 bottom-0 z-0 flex h-[min(72svh,620px)] flex-col bg-ink text-bg"
+        className="fixed inset-x-0 bottom-0 z-0 flex h-[min(88svh,560px)] flex-col bg-ink text-bg md:h-[min(72svh,620px)]"
         style={{ transform: "translateY(calc((1 - var(--footer-progress, 0)) * 14%))" }}
       >
         <div className="grain" aria-hidden />
@@ -74,7 +74,7 @@ export default function SiteFooter() {
           <div className="grid items-end gap-x-8 gap-y-8 md:grid-cols-12">
             <div className="md:col-span-8">
               <p className="label text-white/40">Have a problem worth solving?</p>
-              <Link href="/contact" className="group mt-3 block">
+              <Link href="/contact" className="group tap-target mt-3 block py-1">
                 <span className="display block text-[clamp(1.9rem,5.4vw,4.2rem)] leading-[0.9] transition-colors duration-500 group-hover:text-accent">
                   Let&apos;s talk
                   <span
@@ -118,12 +118,12 @@ export default function SiteFooter() {
             </div>
 
             <nav aria-label="Footer" className="md:col-span-5">
-              <ul className="flex flex-wrap gap-x-6 gap-y-2">
+              <ul className="flex flex-wrap gap-x-5 gap-y-0 sm:gap-y-2">
                 {[...nav, { label: "Contact", href: "/contact" }].map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="ulink text-sm text-white/70 transition-colors duration-300 hover:text-accent"
+                      className="ulink tap-target inline-block py-1.5 text-sm text-white/70 transition-colors duration-300 hover:text-accent"
                     >
                       {item.label}
                     </Link>
@@ -135,7 +135,7 @@ export default function SiteFooter() {
             <div className="md:col-span-3">
               <a
                 href={`mailto:${site.email}`}
-                className="ulink block text-sm text-white/70 transition-colors duration-300 hover:text-accent"
+                className="ulink tap-target inline-block py-1.5 text-sm text-white/70 transition-colors duration-300 hover:text-accent"
               >
                 {site.email}
               </a>
@@ -143,7 +143,7 @@ export default function SiteFooter() {
                 href={site.linkedin}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="ulink mt-2 block text-sm text-white/70 transition-colors duration-300 hover:text-accent"
+                className="ulink tap-target mt-1 inline-block py-1.5 text-sm text-white/70 transition-colors duration-300 hover:text-accent"
               >
                 LinkedIn
               </a>
@@ -157,7 +157,7 @@ export default function SiteFooter() {
           </p>
           <a
             href="#top"
-            className="group label flex items-center gap-2 text-white/60 transition-colors duration-300 hover:text-accent"
+            className="group label tap-target flex items-center gap-2 py-2 text-white/60 transition-colors duration-300 hover:text-accent"
           >
             <span
               className="inline-block transition-transform duration-500 group-hover:-translate-y-1"

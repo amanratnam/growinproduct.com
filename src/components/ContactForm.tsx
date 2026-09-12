@@ -69,10 +69,11 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} className="glass p-6 sm:p-8" noValidate>
-      <div className="flex items-baseline justify-between gap-4">
+      {/* Stacked on a phone: side by side, both labels wrapped to two lines. */}
+      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
         <p className="label text-ink-40">Start a conversation</p>
         <p className="label flex items-center gap-2 text-ink-40">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
           {site.availability}
         </p>
       </div>

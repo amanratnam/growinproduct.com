@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <main>
-      <section className="shell pb-[clamp(28px,5vh,56px)] pt-[clamp(40px,8vh,96px)]">
-        <div className="rule-b flex items-baseline justify-between gap-4 pb-4">
+      <section className="shell pb-[clamp(22px,4vh,56px)] pt-[clamp(24px,5vh,96px)]">
+        <div className="rule-b flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-3 md:pb-4">
           <p className="label text-ink-40">Selected work</p>
           <p className="label text-ink-40">
             {String(cases.length).padStart(2, "0")} cases
