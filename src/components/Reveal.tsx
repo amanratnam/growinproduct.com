@@ -49,7 +49,13 @@ export default function Reveal({
   className?: string;
   children: ReactNode;
 } & Record<string, unknown>) {
-  const Tag = (as ?? "div") as ElementType;
+  /* Typed as a plain component of loose props on purpose. Resolving `as`
+     against every intrinsic element makes TS build a union it can't represent,
+     and a precise polymorphic signature is far heavier than this component
+     warrants. */
+  const Tag = (as ?? "div") as React.FC<
+    Record<string, unknown> & { ref?: React.Ref<HTMLElement> }
+  >;
   const ref = useReveal<HTMLElement>();
 
   return (

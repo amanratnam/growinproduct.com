@@ -1,18 +1,16 @@
 import Hero from "@/components/Hero";
+import ImpactSummary from "@/components/ImpactSummary";
 import ServiceIndex from "@/components/ServiceIndex";
-import CaseStack from "@/components/CaseStack";
 import ProcessStages from "@/components/ProcessStages";
-import AboutBlock from "@/components/AboutBlock";
 import Praise from "@/components/Praise";
 
 export default function Home() {
   return (
     <main>
       <Hero />
+      <ImpactSummary />
       <ServiceIndex />
-      <CaseStack />
       <ProcessStages />
-      <AboutBlock />
       <Praise />
     </main>
   );

@@ -1,14 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import Marquee from "./Marquee";
 import WordRotator from "./WordRotator";
-import { RevealLines } from "./Reveal";
+import Reveal, { RevealLines } from "./Reveal";
 import { heroMarquee, heroRotator, site } from "@/lib/content";
 
-/* Full-viewport opening plate. Giant display line with one rotating word, a
-   standing statement underneath, and the marquee + explore cue pinned to the
-   bottom edge so the fold reads as a single composed frame. */
+/* The 3D scene is client-only and heavy; keep it out of the server bundle and
+   off the critical path so the headline paints immediately. */
+const ValueMachine = dynamic(() => import("./three/ValueMachine"), {
+  ssr: false,
+  loading: () => null,
+});
+
+/* Opening plate: the statement holds the left column on one axis, and the
+   perpetual value machine occupies the right. */
 export default function Hero() {
   return (
     <section
@@ -18,49 +25,80 @@ export default function Hero() {
     >
       <div className="grain" aria-hidden />
 
-      <div className="shell flex flex-1 flex-col justify-center pb-10 pt-[clamp(48px,9vh,96px)]">
-        {/* meta row, aligned to the same gutter as everything below */}
-        <div className="rule-b flex items-baseline justify-between gap-4 pb-4">
-          <p className="label text-ink-40">Independent consultancy</p>
-          <p className="label text-ink-40">Est. 2021</p>
-        </div>
+      <div className="shell flex flex-1 items-center pb-8 pt-[clamp(28px,5vh,64px)]">
+        <div className="grid w-full items-center gap-x-10 gap-y-10 lg:grid-cols-12">
+          {/* ---- left: the whole statement, left-aligned on one axis ---- */}
+          <div className="lg:col-span-6">
+            <h1 className="display text-[clamp(2.6rem,7.4vw,6.2rem)]">
+              <RevealLines
+                lines={[
+                  "Grow in",
+                  /* No wrapper: .reveal-line forces its child to display:block,
+                     which knocks the rotator's own box out of alignment. */
+                  <WordRotator key="rotator" words={heroRotator} className="text-accent" />,
+                ]}
+                stagger={0.1}
+              />
+            </h1>
 
-        <h1 className="display mt-[clamp(24px,5vh,56px)] text-[clamp(2.6rem,11.5vw,10.5rem)]">
-          <RevealLines
-            lines={[
-              "Grow in",
-              /* No wrapper: .reveal-line forces its child to display:block,
-                 which was overriding the wrapper's inline-flex and knocking
-                 the rotator's own box out of alignment. */
-              <WordRotator key="rotator" words={heroRotator} className="text-accent" />,
-            ]}
-            stagger={0.1}
-          />
-        </h1>
-
-        {/* Statement column sits on the right half on wide screens so the
-            display line keeps the full measure to itself. */}
-        <div className="mt-[clamp(28px,6vh,64px)] grid gap-8 md:grid-cols-12">
-          <div className="md:col-span-5 lg:col-span-4">
-            <p className="label text-ink-40">What this is</p>
-          </div>
-          <div className="md:col-span-7 lg:col-span-8">
-            <p className="prose-lead max-w-[52ch] text-ink">
+            <Reveal
+              as="p"
+              delay={0.14}
+              className="mt-7 max-w-[46ch] text-[clamp(1rem,1.15vw,1.15rem)] leading-relaxed text-muted"
+            >
               Most consultancies hand you a deck. I ship product with you, from
               strategy through launch, as one senior operator rather than a bench
               of juniors behind a pitch.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              <Link href="/projects" className="pill pill--solid">
+            </Reveal>
+
+            <Reveal delay={0.2} className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/work" className="pill pill--solid">
                 See the work
               </Link>
               <Link href="/contact" className="pill">
                 Start a conversation
               </Link>
-              <span className="label ml-1 flex items-center gap-2 text-ink-40">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-                {site.availability}
-              </span>
+            </Reveal>
+
+            {/* Standing facts. Est. 2021 lives here as a credential rather than
+                floating above the headline. */}
+            <Reveal
+              delay={0.26}
+              className="mt-10 grid max-w-lg grid-cols-3 gap-px border border-rule bg-rule"
+            >
+              {[
+                ["Est. 2021", "Independent"],
+                ["10+ yrs", "Shipping product"],
+                ["2 seats", "Open for Q3 2026"],
+              ].map(([value, label]) => (
+                <div key={label} className="bg-bg px-4 py-4">
+                  <p className="display text-[clamp(0.95rem,1.5vw,1.3rem)]">{value}</p>
+                  <p className="label mt-2 leading-relaxed text-ink-40">{label}</p>
+                </div>
+              ))}
+            </Reveal>
+          </div>
+
+          {/* ---- right: the perpetual value machine ---- */}
+          <div className="lg:col-span-6">
+            <div
+              className="relative h-[clamp(240px,38vh,460px)] w-full lg:h-[clamp(340px,54vh,560px)]"
+              aria-hidden
+            >
+              <ValueMachine />
+            </div>
+            {/* Names what the loop is showing, so it argues rather than decorates. */}
+            <div className="mt-1 grid grid-cols-3 gap-4 border-t border-rule pt-4">
+              {[
+                ["Capital in", "Budget, time, attention"],
+                ["The work", "Strategy through build"],
+                ["Product out", "Shipped, and compounding"],
+              ].map(([head, sub]) => (
+                <div key={head}>
+                  <p className="label text-ink">{head}</p>
+                  <p className="mt-1.5 text-[11px] leading-snug text-ink-40">{sub}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -87,7 +125,7 @@ export default function Hero() {
         <div className="shell flex items-center justify-between py-5">
           <p className="label text-ink-40">{site.tagline}</p>
           <a
-            href="#services"
+            href="#impact"
             className="group label flex items-center gap-2 text-ink transition-colors duration-300 hover:text-accent"
           >
             Explore
@@ -95,7 +133,7 @@ export default function Hero() {
               className="inline-block transition-transform duration-500 group-hover:translate-y-1"
               aria-hidden
             >
-              ↓
+              &darr;
             </span>
           </a>
         </div>
