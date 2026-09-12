@@ -7,27 +7,6 @@ import { usePathname } from "next/navigation";
 import { nav, site } from "@/lib/content";
 import useScrollLock from "./useScrollLock";
 
-function MailIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" className={className} fill="none" aria-hidden>
-      <path
-        d="M2.5 5.5h15v9h-15z M2.5 6l7.5 5 7.5-5"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function LinkedInIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" className={className} fill="currentColor" aria-hidden>
-      <path d="M4.6 7.3H2.2V17h2.4V7.3zM3.4 3a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8zM17.8 17h-2.4v-4.7c0-1.1-.4-1.9-1.4-1.9-.8 0-1.2.5-1.4 1-.1.2-.1.5-.1.8V17H10s0-8.1 0-9h2.4v1.3c.3-.5 1-1.2 2.3-1.2 1.7 0 3 1.1 3 3.5V17z" />
-    </svg>
-  );
-}
-
 export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -48,8 +27,6 @@ export default function SiteHeader() {
       .filter((el): el is HTMLElement => Boolean(el));
     if (!targets.length) return;
 
-    /* A band across the upper-middle of the viewport decides which section
-       counts as current, so the marker doesn't flicker at section seams. */
     const io = new IntersectionObserver(
       (entries) => {
         const hit = entries
@@ -65,13 +42,17 @@ export default function SiteHeader() {
     return () => io.disconnect();
   }, [pathname]);
 
-  /* Lock the page while the mobile sheet is up. */
   useScrollLock(open);
 
-  const isActive = (href: string) =>
-    href.startsWith("/#")
-      ? pathname === "/" && section === href.slice(2)
-      : pathname.startsWith(href);
+  const isActive = (href: string) => {
+    /* Home is current only at the top of the home page — once a hash section
+       owns the scroll position, that entry takes the marker instead. */
+    if (href === "/") return pathname === "/" && section === null;
+    if (href.startsWith("/#")) return pathname === "/" && section === href.slice(2);
+    return pathname.startsWith(href);
+  };
+
+  const contactActive = pathname.startsWith("/contact");
 
   return (
     <>
@@ -93,15 +74,12 @@ export default function SiteHeader() {
               priority
               className="header-mark h-7 w-7 transition-transform duration-500 group-hover:rotate-[-8deg] md:h-8 md:w-8"
             />
-            {/* opacity rather than a fixed ink colour, so it follows the
-                header when it inverts over the footer */}
             <span className="label hidden opacity-60 transition-colors duration-300 group-hover:text-accent group-hover:opacity-100 lg:inline">
               {site.location}
             </span>
           </Link>
 
-          {/* centre: tabs. Active one is a filled box, the way the reference
-              marks its current section. */}
+          {/* centre: tabs. Active one is a filled box. */}
           <nav aria-label="Primary" className="hidden md:block">
             <ul className="flex items-center gap-1">
               {nav.map((item) => {
@@ -112,9 +90,7 @@ export default function SiteHeader() {
                       href={item.href}
                       aria-current={active ? "page" : undefined}
                       className={`label block px-3 py-2 transition-colors duration-300 ${
-                        active
-                          ? "bg-ink text-bg"
-                          : "hover:text-accent"
+                        active ? "bg-ink text-bg" : "hover:text-accent"
                       }`}
                     >
                       {item.label}
@@ -125,30 +101,17 @@ export default function SiteHeader() {
             </ul>
           </nav>
 
-          {/* right: contact rail */}
-          <div className="flex items-center justify-end gap-4">
-            <a
-              href={`mailto:${site.email}`}
-              className="ulink label hidden transition-colors duration-300 hover:text-accent lg:inline-block"
+          {/* right: the one action worth taking from anywhere on the site */}
+          <div className="flex items-center justify-end gap-3">
+            <Link
+              href="/contact"
+              aria-current={contactActive ? "page" : undefined}
+              className={`header-cta pill !min-h-0 !px-4 !py-2.5 !text-[0.68rem] ${
+                contactActive ? "pill--solid" : ""
+              }`}
             >
-              {site.email}
-            </a>
-            <a
-              href={`mailto:${site.email}`}
-              aria-label={`Email ${site.email}`}
-              className="transition-colors duration-300 hover:text-accent lg:hidden"
-            >
-              <MailIcon className="h-[18px] w-[18px]" />
-            </a>
-            <a
-              href={site.linkedin}
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label="LinkedIn"
-              className="transition-colors duration-300 hover:text-accent"
-            >
-              <LinkedInIcon className="h-[18px] w-[18px]" />
-            </a>
+              Let&apos;s talk
+            </Link>
 
             <button
               type="button"
@@ -189,10 +152,10 @@ export default function SiteHeader() {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex items-baseline gap-4 py-5"
+                  className="flex items-baseline gap-4 py-4"
                 >
                   <span className="label text-ink-40">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="display text-[13vw] leading-none">{item.label}</span>
+                  <span className="display text-[11vw] leading-none">{item.label}</span>
                 </Link>
               </li>
             ))}
@@ -202,9 +165,12 @@ export default function SiteHeader() {
             onClick={() => setOpen(false)}
             className="pill pill--solid mt-8 w-full"
           >
-            Start a conversation
+            Let&apos;s talk
           </Link>
           <p className="label mt-6 text-ink-40">{site.availability}</p>
+          <a href={`mailto:${site.email}`} className="ulink mt-3 block text-sm text-muted">
+            {site.email}
+          </a>
         </nav>
       </div>
     </>
