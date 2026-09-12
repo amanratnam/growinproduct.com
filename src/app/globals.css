@@ -37,6 +37,12 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 0.6s;
 
+  /* How far a rotating headline word travels, as a share of its line box.
+     Anton's content box is ~1.5em while the display line box is 0.86em, so a
+     plain 100% slide leaves the outgoing and incoming glyphs overlapping by
+     roughly 54px a side. 180% clears the content box entirely. */
+  --rotator-travel: 180%;
+
   /* ---- scroll-driven, written by JS ---- */
   --footer-progress: 0;
 
@@ -329,15 +335,23 @@ html.lenis body {
 
 /* The rotating word measures itself into a hidden span so the line's width
    animates instead of snapping when a longer word swaps in. */
+/* Both words occupy the same single grid cell, which is the only way to
+   guarantee they share an identical box. Previously the outgoing word was
+   absolutely positioned while the incoming one sat in normal flow, so the two
+   started tens of pixels apart and the swap read as an overlapping
+   double-image rather than one continuous strip. */
 .rotator {
   position: relative;
-  display: inline-block;
+  display: inline-grid;
+  grid-template-columns: 100%;
+  align-items: end;
   overflow: hidden;
   vertical-align: bottom;
   text-align: left;
   transition: width 0.5s var(--ease);
 }
 .rotator__item {
+  grid-area: 1 / 1;
   display: block;
   white-space: nowrap;
 }
@@ -345,8 +359,6 @@ html.lenis body {
   animation: rot-in 0.55s var(--ease) both;
 }
 .rotator__item--out {
-  position: absolute;
-  inset: 0;
   animation: rot-out 0.55s var(--ease) both;
 }
 .rotator__measure {
@@ -360,7 +372,7 @@ html.lenis body {
 
 @keyframes rot-in {
   from {
-    transform: translateY(100%);
+    transform: translateY(var(--rotator-travel));
     opacity: 0;
   }
   to {
@@ -374,7 +386,7 @@ html.lenis body {
     opacity: 1;
   }
   to {
-    transform: translateY(-100%);
+    transform: translateY(calc(var(--rotator-travel) * -1));
     opacity: 0;
   }
 }
