@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Montserrat } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { site } from "@/lib/content";
@@ -29,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s · Grow In Product",
   },
   description:
-    "Product strategy, business analysis, AI & automation, and fractional product leadership. One senior operator, strategy through launch.",
+    "Senior product leadership, embedded in your team. Product strategy, business analysis, AI & automation and fractional product leadership from one senior operator.",
   openGraph: {
     title: "Grow In Product",
     description:
@@ -51,14 +50,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${anton.variable} ${montserrat.variable}`}>
-      <head>
-        {/* Scroll reveals start at opacity 0 and are switched on by an
-            IntersectionObserver. Without scripting that never happens, so the
-            page would render blank. */}
-        <noscript>
-          <style>{`.reveal{opacity:1;transform:none}.reveal-line>*{transform:none}`}</style>
-        </noscript>
-      </head>
       <body>
         <a
           href="#main"
@@ -66,14 +57,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         >
           Skip to content
         </a>
-        <SmoothScroll>
-          <SiteHeader />
-          {/* pushes page content clear of the fixed header */}
-          <div id="main" style={{ paddingTop: "var(--header-h)" }}>
-            {children}
-          </div>
-          <SiteFooter />
-        </SmoothScroll>
+        <SiteHeader />
+        {/* pushes page content clear of the fixed header */}
+        <div id="main" style={{ paddingTop: "var(--header-h)" }}>
+          {children}
+        </div>
+        <SiteFooter />
       </body>
     </html>
   );

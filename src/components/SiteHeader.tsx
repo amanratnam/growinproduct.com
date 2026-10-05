@@ -57,7 +57,7 @@ export default function SiteHeader() {
   return (
     <>
       <header
-        className="site-header fixed inset-x-0 top-0 z-50 bg-bg/90 backdrop-blur-md transition-colors duration-300"
+        className="fixed inset-x-0 top-0 z-50 border-b border-rule bg-bg/90 backdrop-blur-md"
         style={{ minHeight: "var(--header-h)" }}
       >
         {/* Flex on phones, three-column grid from md up. The grid can't be used
@@ -74,9 +74,9 @@ export default function SiteHeader() {
               width={64}
               height={64}
               priority
-              className="header-mark h-7 w-7 transition-transform duration-500 group-hover:rotate-[-8deg] md:h-8 md:w-8"
+              className="h-8 w-8 transition-transform duration-500 group-hover:rotate-[-8deg]"
             />
-            <span className="label hidden whitespace-nowrap opacity-60 transition-colors duration-300 group-hover:text-accent group-hover:opacity-100 xl:inline">
+            <span className="label hidden whitespace-nowrap text-faint transition-colors duration-300 group-hover:text-accent xl:inline">
               {site.location}
             </span>
           </Link>
@@ -91,8 +91,8 @@ export default function SiteHeader() {
                     <Link
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      className={`label block px-3 py-2 transition-colors duration-300 ${
-                        active ? "bg-ink text-bg" : "hover:text-accent"
+                      className={`label block rounded-full px-3.5 py-2 transition-colors duration-200 ${
+                        active ? "bg-ink text-bg" : "hover:bg-sand"
                       }`}
                     >
                       {item.label}
@@ -108,9 +108,7 @@ export default function SiteHeader() {
             <Link
               href="/contact"
               aria-current={contactActive ? "page" : undefined}
-              className={`header-cta pill tap-target !min-h-9 shrink-0 !px-3.5 !py-2 !text-[0.66rem] sm:!px-4 sm:!text-[0.68rem] ${
-                contactActive ? "pill--solid" : ""
-              }`}
+              className={`pill pill--sm shrink-0 ${contactActive ? "" : "pill--solid"}`}
             >
               Let&apos;s talk
             </Link>
@@ -136,9 +134,6 @@ export default function SiteHeader() {
             </button>
           </div>
         </div>
-        <div className="shell">
-          <div className="header-rule rule-b" />
-        </div>
       </header>
 
       {/* mobile sheet */}
@@ -156,7 +151,7 @@ export default function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="flex items-baseline gap-4 py-3.5"
                 >
-                  <span className="label text-ink-40">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="label text-faint">{String(i + 1).padStart(2, "0")}</span>
                   <span className="display text-[clamp(1.9rem,10vw,2.8rem)] leading-none">{item.label}</span>
                 </Link>
               </li>
@@ -169,8 +164,7 @@ export default function SiteHeader() {
           >
             Let&apos;s talk
           </Link>
-          <p className="label mt-6 text-ink-40">{site.availability}</p>
-          <a href={`mailto:${site.email}`} className="ulink tap-target mt-2 inline-block py-2 text-sm text-muted">
+          <a href={`mailto:${site.email}`} className="tlink tap-target mt-6 inline-block py-2 text-[0.9375rem] text-muted">
             {site.email}
           </a>
         </nav>

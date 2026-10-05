@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import AboutBlock from "@/components/AboutBlock";
-import { RevealLines } from "@/components/Reveal";
+import PageHeader from "@/components/PageHeader";
+import AboutBlock, { StandupScene } from "@/components/AboutBlock";
+import CtaBand from "@/components/CtaBand";
+import { about } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -11,18 +13,9 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main>
-      <section className="shell pb-[clamp(28px,5vh,72px)] pt-[clamp(24px,5vh,96px)]">
-        <div className="rule-b flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-3 md:pb-4">
-          <p className="label text-ink-40">About</p>
-          <p className="label text-ink-40">One operator</p>
-        </div>
-
-        <h1 className="display mt-[clamp(24px,5vh,56px)] text-[clamp(2.4rem,9vw,8rem)]">
-          <RevealLines lines={["One operator,", "full product brain"]} stagger={0.1} />
-        </h1>
-      </section>
-
+      <PageHeader lines={about.title} intro={about.lead} aside={<StandupScene />} />
       <AboutBlock />
+      <CtaBand />
     </main>
   );
 }

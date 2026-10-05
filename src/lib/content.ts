@@ -3,6 +3,9 @@
    Layout components read from this file and never hold their own strings, so
    the same numbers and wording can't drift between the home page and a
    dedicated route.
+
+   House style: short sentences, one idea each, and no lists of three. Pairs
+   and fours read as considered; triplets read as filler.
 --------------------------------------------------------------------------- */
 
 export const site = {
@@ -11,8 +14,19 @@ export const site = {
   email: "hello@growinproduct.com",
   location: "Product & technology consulting",
   linkedin: "https://www.linkedin.com/company/growinproduct",
-  availability: "2 seats open · Q3 2026",
+  founded: "2021",
+  years: "10+ years",
+  seats: 2,
 } as const;
+
+/* Rolls forward with the calendar, so the page can never advertise a quarter
+   that has already ended. Evaluated at build time on static pages — only call
+   it from server components, or the client may hydrate with a different
+   quarter than the server rendered. */
+export function availability(date = new Date()) {
+  const quarter = Math.floor(date.getMonth() / 3) + 1;
+  return `${site.seats} client seats open for Q${quarter} ${date.getFullYear()}`;
+}
 
 export const nav = [
   { label: "Home", href: "/" },
@@ -24,82 +38,64 @@ export const nav = [
 
 /* ---------------------------------------------------------------- hero ---- */
 
-/* The headline holds one fixed word and one that cycles. Keep the rotating
-   words close in length so the line doesn't jump around too hard. */
-export const heroRotator = [
-  "PRODUCT",
-  "STRATEGY",
-  "ROADMAPS",
-  "AI SYSTEMS",
-  "WORKFLOWS",
-] as const;
-
-export const heroMarquee = [
-  "Product strategy",
-  "Business analysis",
-  "PRDs & specs",
-  "Workflow design",
-  "AI & automation",
-  "Fractional leadership",
-] as const;
+export const hero = {
+  lines: ["From fuzzy problem", "to shipped product"],
+  lead: "Senior product leadership, embedded in your team for as long as you need it. The person who scopes the work is the one who ships it.",
+} as const;
 
 /* ------------------------------------------------------------ services ---- */
 
+export type ServiceIcon = "strategy" | "analysis" | "spec" | "workflow" | "ai" | "lead";
+
 export type Service = {
   id: string;
+  icon: ServiceIcon;
   title: string;
   summary: string;
-  detail: string;
   deliverables: readonly string[];
 };
 
 export const services: readonly Service[] = [
   {
     id: "strategy",
-    title: "Product Strategy",
-    summary: "North-star definition, positioning and roadmaps that connect vision to outcomes.",
-    detail:
-      "Most roadmaps are a list of promises with no spine. We find the one workflow that actually retains customers, build the strategy around it, and cut everything that doesn't serve it.",
+    icon: "strategy",
+    title: "Product strategy",
+    summary: "Find the one workflow that keeps customers, then build the roadmap around it.",
     deliverables: ["Positioning", "North-star metric", "Roadmap", "Prioritisation model"],
   },
   {
     id: "analysis",
-    title: "Business Analysis",
-    summary: "Requirements, data deep-dives and opportunity sizing that turn ambiguity into decisions.",
-    detail:
-      "Before anything gets built, the problem gets named and sized. Stakeholder interviews, analytics audits and a written point of view you can disagree with.",
+    icon: "analysis",
+    title: "Business analysis",
+    summary: "Name the problem and size it before anyone writes a line of code.",
     deliverables: ["Requirements", "Data audit", "Opportunity sizing", "Decision memo"],
   },
   {
     id: "prds",
-    title: "PRD & Documentation",
-    summary: "Crisp specs, user stories and acceptance criteria engineers actually want to read.",
-    detail:
-      "Specs written with engineering constraints already in the room, not discovered in sprint three. Short, testable, and versioned alongside the code.",
+    icon: "spec",
+    title: "PRDs & documentation",
+    summary: "Short, testable specs written with engineering in the room, not after it.",
     deliverables: ["PRDs", "User stories", "Acceptance criteria", "API contracts"],
   },
   {
     id: "workflows",
-    title: "Workflow Design",
-    summary: "Operational flows mapped, simplified and rebuilt, with fewer handoffs and faster cycles.",
-    detail:
-      "We document the real process, not the wiki version. Then we remove the handoffs that exist only because nobody ever questioned them.",
+    icon: "workflow",
+    title: "Workflow design",
+    summary: "Map how work really moves, then remove the handoffs nobody ever questioned.",
     deliverables: ["Process maps", "Routing rules", "SLAs", "Runbooks"],
   },
   {
     id: "ai",
-    title: "AI & Automation",
-    summary: "Practical AI integrations and automation pipelines that remove busywork, not jobs.",
-    detail:
-      "LLM features shipped with evals, kill switches and a human in the loop where confidence is low. Built to survive a bad model day.",
+    icon: "ai",
+    title: "AI & automation",
+    summary: "LLM features with evals and a human in the loop, built to survive a bad model day.",
     deliverables: ["LLM features", "Eval harness", "Automation pipelines", "Guardrails"],
   },
   {
     id: "leadership",
-    title: "Fractional Leadership",
-    summary: "Senior product leadership embedded in your team, exactly as long as you need it.",
-    detail:
-      "In your standups, your roadmap reviews and your hiring loops. The person you talk to is the person doing the work.",
+    icon: "lead",
+    title: "Fractional leadership",
+    summary: "A senior product lead in your standups and roadmap reviews, for as long as you need one.",
     deliverables: ["Team coaching", "Roadmap ownership", "Hiring support", "Exec reporting"],
   },
 ];
@@ -108,80 +104,76 @@ export const services: readonly Service[] = [
 
 export type Case = {
   id: string;
-  /* drives the accent swap as this case scrolls into view */
-  theme: "black" | "red";
   sector: string;
-  title: readonly [string, string];
-  tags: readonly string[];
-  headline: string;
-  summary: string;
-  body: string;
-  stats: readonly (readonly [string, string])[];
+  title: string;
+  metric: { value: string; label: string };
+  problem: string;
+  change: string;
+  comparison: readonly { label: string; before: string; after: string }[];
 };
 
 export const cases: readonly Case[] = [
   {
     id: "patient-intake",
-    theme: "red",
     sector: "Healthcare SaaS",
-    title: ["Patient Intake,", "Rebuilt"],
-    tags: ["#HEALTHTECH", "#B2B SAAS"],
-    headline: "−62% intake time",
-    summary:
-      "Intake and triage cut from 14 screens to 5, with insurance verification moved to an async background job.",
-    body: "A multi-clinic healthcare SaaS was losing patients mid-intake: fourteen screens, duplicate questions and manual insurance checks. We shadowed front-desk staff, mapped every drop-off point, and rebuilt the flow around the three questions that actually gate triage. Insurance verification became an async background job with graceful fallbacks. The new flow shipped behind a feature flag clinic-by-clinic, with intake time and abandonment tracked from day one.",
-    stats: [
-      ["62%", "Faster intake"],
-      ["4.8★", "Patient CSAT"],
-      ["3 wks", "To first ship"],
+    title: "Patient intake, rebuilt",
+    metric: { value: "−62%", label: "intake time" },
+    problem:
+      "A multi-clinic healthcare platform was losing patients halfway through a fourteen-screen intake full of duplicate questions and manual insurance checks.",
+    change:
+      "After shadowing front-desk staff, we rebuilt the flow around the few questions that actually gate triage and moved insurance checks to a background job. It shipped clinic by clinic behind a feature flag.",
+    comparison: [
+      { label: "Screens to complete", before: "14", after: "5" },
+      { label: "Insurance check", before: "Manual, blocking", after: "Async, with fallback" },
+      { label: "Median intake", before: "11m 20s", after: "4m 18s" },
+      { label: "Abandonment", before: "31%", after: "9%" },
     ],
   },
   {
     id: "ops-workflow",
-    theme: "black",
-    sector: "Workflow Optimisation",
-    title: ["Ops That", "Ran Itself"],
-    tags: ["#LOGISTICS", "#AUTOMATION"],
-    headline: "31 hrs/week saved",
-    summary:
-      "A 40-step back-office process reduced to rule-based routing, removing 17 manual handoffs.",
-    body: "A logistics firm's back office ran on tribal knowledge: forty steps, seventeen handoffs, three spreadsheets and a prayer. We documented the real process, found that seventy percent of approvals followed predictable rules, and built rule-based routing with human escalation for the rest. The remaining manual steps got checklists and SLAs. Total rebuild time: eight weeks. Errors post-launch: zero.",
-    stats: [
-      ["31h", "Saved weekly"],
-      ["17", "Handoffs removed"],
-      ["0", "Errors post-launch"],
+    sector: "Logistics",
+    title: "Ops that run themselves",
+    metric: { value: "31 hrs", label: "saved every week" },
+    problem:
+      "A logistics firm's back office ran on tribal knowledge: forty steps and seventeen handoffs, held together by spreadsheets.",
+    change:
+      "Seventy percent of approvals turned out to follow predictable rules, so they now route automatically with a human on the exceptions. The rebuild took eight weeks and has run without an error since launch.",
+    comparison: [
+      { label: "Process steps", before: "40", after: "12" },
+      { label: "Manual handoffs", before: "17", after: "0" },
+      { label: "Approval routing", before: "Tribal knowledge", after: "Rule-based" },
+      { label: "Weekly hours", before: "44h", after: "13h" },
     ],
   },
   {
     id: "focused-roadmap",
-    theme: "red",
-    sector: "Product Strategy",
-    title: ["From Factory", "To Focus"],
-    tags: ["#B2B ANALYTICS", "#STRATEGY"],
-    headline: "2.3× activation",
-    summary:
-      "A B2B analytics product repositioned around one core workflow, with the roadmap cut by 60%.",
-    body: "A B2B analytics startup shipped fast but retained poorly. The roadmap had eighty items and no spine. Usage data showed one workflow drove nearly all retained accounts. We repositioned the product around it, cut the roadmap sixty percent, and rewrote onboarding to reach that workflow in under five minutes. Activation went 2.3× in a quarter; ninety-day retention followed.",
-    stats: [
-      ["2.3×", "Activation lift"],
-      ["60%", "Roadmap cut"],
-      ["+41%", "Retention (90d)"],
+    sector: "B2B analytics",
+    title: "From factory to focus",
+    metric: { value: "2.3×", label: "activation in a quarter" },
+    problem:
+      "A B2B analytics startup shipped fast but kept few of the customers it won. The roadmap had eighty items and no spine.",
+    change:
+      "Usage data showed one workflow drove nearly every retained account. We cut the roadmap by sixty percent to serve it, and rebuilt onboarding so new users reach it in under five minutes.",
+    comparison: [
+      { label: "Roadmap items", before: "80", after: "32" },
+      { label: "Time to core value", before: "3 sessions", after: "< 5 min" },
+      { label: "Activation", before: "8.4%", after: "19.3%" },
+      { label: "90-day retention", before: "41%", after: "58%" },
     ],
   },
   {
     id: "support-copilot",
-    theme: "black",
-    sector: "AI & Automation",
-    title: ["Support", "Copilot"],
-    tags: ["#LLM", "#SUPPORT OPS"],
-    headline: "78% auto-resolved",
-    summary:
-      "An LLM triage layer that drafts replies, routes edge cases and learns from every agent correction.",
-    body: "Support volume was scaling faster than headcount. We built an LLM triage layer that classifies intent, drafts replies grounded in the help centre, and routes anything low-confidence to humans, with every agent correction feeding the eval set. Shipped in six weeks with a kill switch and a weekly quality review. Seventy-eight percent of tickets now resolve without human touch; first-response time halved.",
-    stats: [
-      ["78%", "Auto-resolved"],
-      ["−54%", "First-response time"],
-      ["6 wks", "Concept to prod"],
+    sector: "Customer support",
+    title: "A support copilot",
+    metric: { value: "78%", label: "of tickets resolved without a human" },
+    problem: "Support volume was growing faster than the team could hire to meet it.",
+    change:
+      "An LLM layer now reads each ticket and drafts a reply grounded in the help centre. Anything low-confidence goes to a person, and every correction feeds the eval set. Concept to production took six weeks.",
+    comparison: [
+      { label: "Tickets touched by a human", before: "100%", after: "22%" },
+      { label: "First response", before: "3h 40m", after: "1h 42m" },
+      { label: "Quality review", before: "Ad hoc", after: "Weekly eval set" },
+      { label: "Escalation path", before: "None", after: "Confidence-gated" },
     ],
   },
 ];
@@ -191,74 +183,80 @@ export const cases: readonly Case[] = [
 export const stages = [
   {
     name: "Discover",
-    desc: "Stakeholder interviews, data audits and market scans. We map what's actually happening before deciding what should.",
-    outputs: ["User research", "Analytics audit", "Landscape scan"],
+    line: "Interviews and a data audit, before anyone has an opinion.",
+    detail:
+      "We map what is actually happening before deciding what should. That means sitting with the people who use the product, and reading the numbers nobody has looked at lately.",
+    output: "A written read of where things really stand",
   },
   {
     name: "Define",
-    desc: "Problems get named, sized and prioritised. A sharp problem statement beats a hundred feature ideas.",
-    outputs: ["Problem framing", "Success metrics", "Priority model"],
+    line: "A pile of ideas becomes one problem, sized.",
+    detail:
+      "A sharp problem statement beats a hundred feature ideas. Every candidate gets sized, and the one worth solving gets a metric attached to it.",
+    output: "One problem statement with its success metric",
   },
   {
     name: "Design",
-    desc: "Flows, specs and prototypes, designed with engineering constraints in the room rather than discovered after.",
-    outputs: ["PRDs", "User flows", "Prototypes"],
+    line: "Specs drafted with engineering in the room.",
+    detail:
+      "Specs and prototypes are written with engineering constraints on the table from day one, rather than discovered halfway through the build.",
+    output: "PRDs and clickable flows your engineers sign off",
   },
   {
     name: "Deliver",
-    desc: "Tight build loops with weekly demos. Scope is managed ruthlessly so the date holds and quality doesn't slip.",
-    outputs: ["Sprint cadence", "QA gates", "Launch plan"],
+    line: "Weekly demos and a date that holds.",
+    detail:
+      "Tight build loops with a demo every week. Scope gets managed openly, so the launch date holds and quality doesn't quietly slip.",
+    output: "A shipped release and the plan to launch it",
   },
   {
     name: "Scale",
-    desc: "Post-launch instrumentation, growth loops and automation so the product compounds without constant pushing.",
-    outputs: ["Funnel analysis", "Experiments", "Team handoff"],
+    line: "Instrument what shipped and let it compound.",
+    detail:
+      "Post-launch instrumentation and growth experiments keep the product improving after it's been handed back to your team.",
+    output: "Live dashboards and a clean team handoff",
   },
 ] as const;
 
 /* ---------------------------------------------------------------- about ---- */
 
-export const aboutBody = [
-  "Grow In Product is run by a single senior product operator, not a bench of juniors behind a polished pitch. You get the person you talk to, on every document, every decision, every demo.",
-  "The throughline of a decade of work: turning fuzzy business problems into shipped, measurable product. Lately with a heavy dose of AI and automation, in the places where it genuinely earns its keep.",
+export const about = {
+  title: ["One operator,", "no bench"],
+  lead: "Grow In Product is one senior product operator, not a bench of juniors behind a polished pitch. The person on your first call is the person writing your specs and sitting in your demos.",
+  body: "A decade of work has had one throughline: turning fuzzy business problems into shipped, measurable product. Lately that includes a lot of AI and automation, used only where it earns its keep. Most of it has been in healthcare and B2B SaaS.",
+} as const;
+
+/* Agency vs. this practice, row by row. Every claim on the right is one the
+   rest of the site already makes. */
+export const comparison = [
+  { label: "Who you talk to", them: "An account manager", us: "The person doing the work" },
+  { label: "Who does the work", them: "Whoever is free on the bench", us: "One senior operator, start to finish" },
+  { label: "What you get", them: "A strategy deck", us: "Shipped product and specs engineers use" },
+  { label: "How long it lasts", them: "A fixed retainer", us: "Exactly as long as you need" },
+  { label: "When you hear back", them: "At the next status call", us: "Usually the same day" },
 ] as const;
 
 export const timeline = [
   {
     period: "Early career",
     title: "Engineering & business analysis",
-    desc: "Started on the technical side, building, then translating between business and engineering.",
+    desc: "Started on the technical side, then moved into translating between the business and its engineers.",
   },
   {
     period: "Growth years",
     title: "Product management",
-    desc: "Owned products end to end across healthcare, SaaS and operations-heavy domains.",
+    desc: "Owned products end to end in healthcare and B2B SaaS, usually in operations-heavy domains.",
   },
   {
     period: "Recent",
-    title: "AI & automation practice",
+    title: "AI & automation",
     desc: "Shipped LLM-powered workflows and automation systems before it was a buzzword.",
   },
   {
     period: "Now",
     title: "Grow In Product",
-    desc: "Independent consulting and fractional product leadership for teams that want senior judgment without senior overhead.",
+    desc: "Consulting and fractional product leadership for teams that want senior judgment without senior overhead.",
   },
-] as const;
-
-export const expertise = [
-  "Product strategy",
-  "Roadmapping",
-  "PRDs & specs",
-  "User research",
-  "Data analysis",
-  "Workflow design",
-  "LLM integration",
-  "Automation",
-  "Stakeholder management",
-  "Agile delivery",
-  "Healthcare SaaS",
-  "B2B platforms",
 ] as const;
 
 /* ---------------------------------------------------------------- praise -- */
@@ -269,33 +267,38 @@ export type Review = {
   cat: "Interview prep" | "Product strategy" | "Educational articles";
 };
 
-/* Real client feedback. Names withheld; time is when the review was left. */
+/* Real client feedback. Names withheld; time is when the review was left.
+   Ordered so the business engagements lead and the one-line reviews close. */
 export const reviews: readonly Review[] = [
   {
     quote:
-      "Aman was great, I would highly recommend having mock interviews with him. Very understanding even when our schedules weren't aligning. I definitely learned some things from our mock interview and he was even willing to mock a case study if I wanted to.",
-    time: "3 months ago",
-    cat: "Interview prep",
+      "Aman is an expert product engineer with a keen eye for detail and truly understands how to bring a product to life. He has helped with our GTM strategy and plan and will continue to help until we launch. Thanks!",
+    time: "4 years ago",
+    cat: "Product strategy",
   },
-  { quote: "Extremely knowledgeable.", time: "1 year ago", cat: "Interview prep" },
-  {
-    quote: "I got actionable feedback on how to improve an interview use case presentation.",
-    time: "1 year ago",
-    cat: "Interview prep",
-  },
-  { quote: "Great work!!", time: "1 year ago", cat: "Product strategy" },
   {
     quote:
-      "After sending me a document reviewing an interview, he answered all my questions in detail and provided materials to help me develop the areas where I can improve. Overall I recommend him for providing feedback on your interviews.",
-    time: "1 year ago",
-    cat: "Interview prep",
+      "Excellent quality and efficient work as always. I've ordered from him multiple times at this point, and he never disappoints. It's always above and beyond. I'd highly recommend him for any product management assistance.",
+    time: "3 years ago",
+    cat: "Product strategy",
   },
-  { quote: "An exceptional service was delivered.", time: "2 years ago", cat: "Interview prep" },
   {
     quote:
       "I collaborated with Aman on a few side projects. He is professional and will always go the extra mile for you. Will definitely hire again, thanks Aman!",
     time: "2 years ago",
     cat: "Educational articles",
+  },
+  {
+    quote:
+      "Aman was incredible to work with! A Product Management expert who demonstrated his knowledge during our 1:1 mock interview and coaching sessions. I went in with no idea how to answer RCA and product design questions, and by our last session I felt like a pro.",
+    time: "2 years ago",
+    cat: "Interview prep",
+  },
+  {
+    quote:
+      "Great work as always! Incredibly detailed, and gave me a lot to work off of to tailor it how I want. I really appreciate the assistance on product related tasks and would recommend him to anyone looking for interview case study guidance!",
+    time: "4 years ago",
+    cat: "Product strategy",
   },
   {
     quote:
@@ -305,24 +308,16 @@ export const reviews: readonly Review[] = [
   },
   {
     quote:
-      "Aman was incredible to work with! A Product Management expert who demonstrated his knowledge during our 1:1 mock interview and coaching sessions. I went in with no idea how to answer RCA and product design questions, and by our last session I felt like a pro.",
-    time: "2 years ago",
+      "Aman was great, I would highly recommend having mock interviews with him. Very understanding even when our schedules weren't aligning. I definitely learned some things from our mock interview and he was even willing to mock a case study if I wanted to.",
+    time: "3 months ago",
     cat: "Interview prep",
   },
-  { quote: "Great work.", time: "3 years ago", cat: "Product strategy" },
   {
     quote:
-      "Excellent quality and efficient work as always. I've ordered from him multiple times at this point, and he never disappoints. It's always above and beyond. I'd highly recommend him for any product management assistance.",
-    time: "3 years ago",
-    cat: "Product strategy",
+      "After sending me a document reviewing an interview, he answered all my questions in detail and provided materials to help me develop the areas where I can improve. Overall I recommend him for providing feedback on your interviews.",
+    time: "1 year ago",
+    cat: "Interview prep",
   },
-  {
-    quote:
-      "Great work as always! Incredibly detailed, and gave me a lot to work off of to tailor it how I want. I really appreciate the assistance on product related tasks and would recommend him to anyone looking for interview case study guidance!",
-    time: "4 years ago",
-    cat: "Product strategy",
-  },
-  { quote: "Excellent work and delivery.", time: "4 years ago", cat: "Product strategy" },
   {
     quote:
       "Great seller! Answered any and all inquiries I had and displayed a wealth of knowledge. I gained valuable insight on product management concepts.",
@@ -330,23 +325,33 @@ export const reviews: readonly Review[] = [
     cat: "Interview prep",
   },
   {
-    quote:
-      "Aman is an expert product engineer with a keen eye for detail and truly understands how to bring a product to life. He has helped with our GTM strategy and plan and will continue to help until we launch. Thanks!",
-    time: "4 years ago",
-    cat: "Product strategy",
+    quote: "I got actionable feedback on how to improve an interview use case presentation.",
+    time: "1 year ago",
+    cat: "Interview prep",
   },
+  { quote: "Extremely knowledgeable.", time: "1 year ago", cat: "Interview prep" },
   {
     quote: "Really good to work with. I definitely recommend Aman.",
     time: "4 years ago",
     cat: "Interview prep",
   },
+  { quote: "An exceptional service was delivered.", time: "2 years ago", cat: "Interview prep" },
+  { quote: "Excellent work and delivery.", time: "4 years ago", cat: "Product strategy" },
+  { quote: "Great work!!", time: "1 year ago", cat: "Product strategy" },
+  { quote: "Great work.", time: "3 years ago", cat: "Product strategy" },
 ];
 
 /* -------------------------------------------------------------- contact ---- */
 
-export const contactRows = [
-  ["Who", "You, plus one senior product operator"],
-  ["What", "Thirty honest minutes about your product"],
-  ["When", "A reply the same day, usually"],
-  ["Dress code", "Come as you are. Half-formed ideas welcome."],
+export const contactSteps = [
+  ["You send this", "Two minutes. Half-formed is fine."],
+  ["I read it myself", "It lands in my inbox, not a queue."],
+  ["We talk", "Thirty minutes about your product."],
+  ["You decide", "No pitch deck and no retainer trap."],
 ] as const;
+
+export const cta = {
+  title: "Bring the fuzzy problem",
+  body: "Thirty minutes, no pitch deck. Tell me what's going wrong and you'll get an honest read on whether I can help.",
+  button: "Start a conversation",
+} as const;
