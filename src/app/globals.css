@@ -2,75 +2,63 @@
 
 /* ===========================================================================
    GROW IN PRODUCT — design system
-   White canvas, black ink, one hairline rule, one accent that swaps per
-   section. Every measurement below is a token; components never invent their
-   own padding, rule colour or easing.
+   Three surfaces (white, sand, ink) alternate down the page so every section
+   has a visible edge. One accent, one rhythm token for section spacing, one
+   type scale. Components never invent their own padding, colour or easing.
    =========================================================================== */
 
 :root {
-  /* ---- ink ---- */
+  /* ---- surfaces ---- */
   --bg: #ffffff;
+  --sand: #f4f2ee;
   --ink: #0a0a0a;
-  --ink-60: rgba(10, 10, 10, 0.6);
-  --ink-40: rgba(10, 10, 10, 0.4);
-  --ink-20: rgba(10, 10, 10, 0.2);
-  --muted: #6f6f6f;
-  --rule: #d9d9d9;
-  --rule-soft: #ececec;
 
-  /* ---- accent, swapped by [data-theme] as sections scroll past ---- */
-  --accent-red: #d81e20;
-  --accent-black: #0a0a0a;
+  /* ---- text. Every text colour clears WCAG AA on both white and sand. ---- */
+  --ink-2: #262626; /* strong body copy */
+  --muted: #595959; /* body copy: 7.0:1 on white, 6.4:1 on sand */
+  --faint: #6e6e6e; /* labels and meta: 5.1:1 on white, 4.6:1 on sand */
+  --on-ink: rgba(255, 255, 255, 0.72); /* body copy on the ink surface */
+  --on-ink-faint: rgba(255, 255, 255, 0.56);
+
+  /* ---- lines ---- */
+  --rule: #e3e0da;
+  --rule-strong: #cdc8bf;
+  --rule-ink: rgba(255, 255, 255, 0.14);
+
   --accent: #d81e20;
+  --accent-deep: #b3161a;
 
-  /* ---- frame geometry: the single source of alignment ---- */
-  --pad: clamp(16px, 3.2vw, 40px); /* page gutter, everything aligns to it */
+  /* ---- geometry ---- */
+  --pad: clamp(20px, 4vw, 48px); /* page gutter; everything aligns to it */
   --header-h: 68px;
-  --frame-inset: var(--pad);
-  --tick: 10px; /* centre tick length on frame edges */
-  --stroke: 1px;
+  --radius: 20px;
+  --radius-sm: 12px;
 
-  /* ---- vertical rhythm ---- */
-  --block: clamp(56px, 9vh, 140px); /* space between major blocks */
+  /* ---- rhythm: the only vertical spacing values sections may use ---- */
+  --section-y: clamp(72px, 9vw, 128px);
+  --head-gap: clamp(32px, 4vw, 56px); /* section heading to its content */
 
   /* ---- motion ---- */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur: 0.6s;
-
-  /* How far a rotating headline word travels, as a share of its line box.
-     Anton's content box is ~1.5em while the display line box is 0.86em, so a
-     plain 100% slide leaves the outgoing and incoming glyphs overlapping by
-     roughly 54px a side. 180% clears the content box entirely. */
-  --rotator-travel: 180%;
-
-  /* ---- scroll-driven, written by JS ---- */
-  --footer-progress: 0;
 
   color: var(--ink);
 }
 
-/* Not scoped to :root, so a case section can also carry a theme and own the
-   accent for its own subtree. That keeps each plate internally consistent no
-   matter which section the page-level theme currently follows. */
-[data-theme="red"] {
-  --accent: #d81e20;
-}
-[data-theme="black"] {
-  --accent: #0a0a0a;
-}
-
 @media (max-width: 767px) {
   :root {
-    --header-h: 56px;
+    --header-h: 60px;
   }
 }
 
 @theme inline {
   --color-bg: var(--bg);
+  --color-sand: var(--sand);
   --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --color-rule: var(--rule);
-  --color-rule-soft: var(--rule-soft);
+  --color-rule-strong: var(--rule-strong);
   --color-accent: var(--accent);
   --font-sans: var(--font-montserrat);
   --font-display: var(--font-anton);
@@ -81,11 +69,10 @@
 }
 
 html {
-  scrollbar-width: none;
   overscroll-behavior-x: none;
-}
-html::-webkit-scrollbar {
-  display: none;
+  scroll-behavior: smooth;
+  /* in-page anchors land below the fixed header rather than under it */
+  scroll-padding-top: var(--header-h);
 }
 
 body {
@@ -94,6 +81,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -105,17 +94,6 @@ body {
   color: var(--bg);
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
 /* Overlay scroll lock. Deliberately on <html>: the same declaration on <body>
    turns body into the scrollport and breaks every sticky element on the page. */
 .scroll-locked {
@@ -124,190 +102,124 @@ html.lenis body {
 
 /* --------------------------------------------------------------- type ---- */
 
+/* Anton is the display voice and is kept for headlines only. Anything that
+   has to be read rather than glanced at is set in Montserrat. */
 .display {
   font-family: var(--font-anton), Impact, "Haettenschweiler", "Arial Narrow Bold", sans-serif;
   font-weight: 400;
-  line-height: 0.86;
-  letter-spacing: -0.02em;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
 }
 
-/* The micro-label used everywhere: section eyebrows, meta rows, table heads.
-   One definition means they can never drift apart. */
-.label {
-  /* The lower bound is a legibility floor, not a design preference: the old
-     0.58rem resolved to 9.3px on a 375px screen, which is below what uppercase
-     tracked text can carry. Tracking tightens with it, since wide letter
-     spacing costs more at small sizes on a phone. */
-  font-size: clamp(0.6875rem, 0.7vw, 0.7rem);
+/* The four headline sizes. A page has one h-hero or h-page; sections use
+   h-section; nothing else is allowed to get this large. */
+.h-hero {
+  font-size: clamp(2.75rem, 5.3vw, 5.5rem);
+  line-height: 0.9;
+}
+.h-page {
+  font-size: clamp(2.5rem, 6vw, 5.25rem);
+  line-height: 0.9;
+}
+.h-section {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+}
+.h-figure {
+  font-size: clamp(2.6rem, 4.4vw, 3.75rem);
+  line-height: 0.9;
+}
+
+/* Card and row titles: readable sentence case, not display caps. */
+.h-card {
+  font-size: 1.1875rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  line-height: 1.25;
-}
-@media (min-width: 768px) {
-  .label {
-    letter-spacing: 0.14em;
-    line-height: 1;
-  }
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
-.prose-lead {
-  font-size: clamp(1rem, 1.25vw, 1.18rem);
+.lead {
+  font-size: clamp(1.0625rem, 1.3vw, 1.25rem);
   line-height: 1.6;
   color: var(--muted);
 }
 
-/* ------------------------------------------------------- footer reveal ---- */
+/* Small caps label for meta: case sectors, table heads, form fields. Used
+   sparingly — it is not a decoration for every block. */
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
 
-/* As the black footer plate takes the viewport, a matching fill slides up
-   behind the header and its ink flips to white, so the bar never sits as a
-   white band across the dark plate. */
-.site-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+/* ----------------------------------------------------------- surfaces ---- */
+
+.section {
+  padding-block: var(--section-y);
+}
+.surface-sand {
+  background: var(--sand);
+}
+.surface-ink {
   background: var(--ink);
-  pointer-events: none;
-  opacity: 0;
-  /* matches the ink transition on .site-header so the bar never shows a
-     half-filled or low-contrast intermediate state */
-  transition: opacity 0.3s var(--ease);
-}
-.footer-taken .site-header::before {
-  opacity: 1;
-}
-.site-header > * {
-  position: relative;
-  z-index: 1;
-}
-.footer-taken .site-header {
   color: var(--bg);
 }
-.footer-taken .site-header .header-rule {
-  border-color: rgba(255, 255, 255, 0.15);
-}
-.footer-taken .site-header .header-mark {
-  filter: brightness(0) invert(1);
-}
-/* the active tab inverts too, or it disappears into the fill */
-.footer-taken .site-header nav [aria-current="page"] {
-  background: var(--bg);
-  color: var(--ink);
-}
-/* the CTA keeps its outline against the dark fill */
-.footer-taken .site-header .header-cta {
-  border-color: rgba(255, 255, 255, 0.45);
+.surface-accent {
+  background: var(--accent);
   color: var(--bg);
 }
-.footer-taken .site-header .header-cta:hover {
-  background: var(--bg);
-  border-color: var(--bg);
-  color: var(--ink);
-}
-
-
-/* Page content is opaque and rides above the fixed footer plate; once it has
-   scrolled past, the transparent spacer lets the footer show through. */
-#main {
-  position: relative;
-  z-index: 1;
-  background: var(--bg);
-}
-
-/* --------------------------------------------------------- page frame ---- */
 
 /* Every section on every page uses .shell for its horizontal bounds, which is
    why columns line up from the header down through the footer. */
 .shell {
   width: 100%;
-  max-width: 1600px;
+  max-width: 1440px;
   margin-inline: auto;
   padding-inline: var(--pad);
 }
 
-/* A full-viewport bordered plate with centre ticks on each edge, the
-   reference's signature container. */
-.frame {
-  position: relative;
-  width: calc(100% - var(--frame-inset) * 2);
-  margin-inline: auto;
-  border: var(--stroke) solid var(--rule);
-  background: var(--bg);
+.rule-t {
+  border-top: 1px solid var(--rule);
 }
-
-.frame__ticks span {
-  position: absolute;
-  background: var(--rule);
-  pointer-events: none;
-}
-.frame__ticks span:nth-child(1),
-.frame__ticks span:nth-child(2) {
-  left: 50%;
-  width: var(--stroke);
-  height: var(--tick);
-  transform: translateX(-50%);
-}
-.frame__ticks span:nth-child(1) {
-  top: 0;
-}
-.frame__ticks span:nth-child(2) {
-  bottom: 0;
-}
-.frame__ticks span:nth-child(3),
-.frame__ticks span:nth-child(4) {
-  top: 50%;
-  width: var(--tick);
-  height: var(--stroke);
-  transform: translateY(-50%);
-}
-.frame__ticks span:nth-child(3) {
-  left: 0;
-}
-.frame__ticks span:nth-child(4) {
-  right: 0;
+.rule-b {
+  border-bottom: 1px solid var(--rule);
 }
 
 /* ------------------------------------------------------------ controls ---- */
 
-/* Pill button. Inverts to solid accent on hover, dips on press. */
 .pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.6em;
-  min-height: 42px;
-  padding: 0 1.25rem;
-  border: var(--stroke) solid currentColor;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border: 1px solid currentColor;
   border-radius: 999px;
   background: transparent;
   color: var(--ink);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   line-height: 1;
   text-transform: uppercase;
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
   transition:
-    color 0.28s var(--ease),
-    background-color 0.28s var(--ease),
-    border-color 0.28s var(--ease),
-    transform 0.18s var(--ease);
+    color 0.25s var(--ease),
+    background-color 0.25s var(--ease),
+    border-color 0.25s var(--ease);
 }
 .pill:hover {
   color: var(--bg);
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--ink);
+  border-color: var(--ink);
 }
 .pill:active {
-  scale: 0.94;
-}
-@media (pointer: coarse) {
-  .pill {
-    min-height: 44px;
-  }
+  scale: 0.97;
 }
 .pill--solid {
   color: var(--bg);
@@ -318,14 +230,27 @@ html.lenis body {
   background: var(--accent);
   border-color: var(--accent);
 }
-.pill--invert {
-  color: var(--bg);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-.pill--invert:hover {
+/* on the accent band: white button, ink on hover */
+.pill--light {
   color: var(--ink);
   background: var(--bg);
   border-color: var(--bg);
+}
+.pill--light:hover {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.pill--sm {
+  min-height: 40px;
+  padding: 0 1.1rem;
+  font-size: 0.75rem;
+}
+.pill .arrow {
+  transition: translate 0.25s var(--ease);
+}
+.pill:hover .arrow {
+  translate: 3px 0;
 }
 
 /* Coarse pointers need a 44px target regardless of how big the ink is. The
@@ -343,93 +268,154 @@ html.lenis body {
     height: max(100%, 44px);
     transform: translate(-50%, -50%);
   }
+  .pill--sm {
+    min-height: 44px;
+  }
 }
 
-/* Link that underlines from the left on hover. */
-.ulink {
-  position: relative;
-  text-decoration: none;
-  color: inherit;
+/* Text link with a quiet underline that firms up on hover. */
+.tlink {
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition:
+    color 0.2s var(--ease),
+    text-decoration-color 0.2s var(--ease);
 }
-.ulink::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -3px;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s var(--ease);
-}
-.ulink:hover::after {
-  transform: scaleX(1);
+.tlink:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
 }
 
-:where(a, button):focus-visible {
+/* Arrow link: label plus an arrow that nudges right on hover. */
+.alink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 0.2s var(--ease);
+}
+.alink::after {
+  content: "→";
+  transition: translate 0.25s var(--ease);
+}
+.alink:hover {
+  color: var(--accent);
+}
+.alink:hover::after {
+  translate: 4px 0;
+}
+
+:where(a, button, select, textarea, input):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
-/* --------------------------------------------------------- hero title ---- */
+/* --------------------------------------------------------------- cards ---- */
 
-/* The rotating word measures itself into a hidden span so the line's width
-   animates instead of snapping when a longer word swaps in. */
-/* Both words occupy the same single grid cell, which is the only way to
-   guarantee they share an identical box. Previously the outgoing word was
-   absolutely positioned while the incoming one sat in normal flow, so the two
-   started tens of pixels apart and the swap read as an overlapping
-   double-image rather than one continuous strip. */
-.rotator {
-  position: relative;
-  display: inline-grid;
-  grid-template-columns: 100%;
-  align-items: end;
-  overflow: hidden;
-  vertical-align: bottom;
-  text-align: left;
-  transition: width 0.5s var(--ease);
+.card {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--bg);
 }
-.rotator__item {
-  grid-area: 1 / 1;
-  display: block;
-  white-space: nowrap;
+.card--link {
+  transition:
+    border-color 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
 }
-.rotator__item--in {
-  animation: rot-in 0.55s var(--ease) both;
+.card--link:hover {
+  border-color: var(--ink);
+  box-shadow: 0 18px 40px -28px rgba(10, 10, 10, 0.35);
 }
-.rotator__item--out {
-  animation: rot-out 0.55s var(--ease) both;
+
+/* -------------------------------------------------------------- stars ---- */
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--accent);
 }
-.rotator__measure {
+
+/* ------------------------------------------------------------ carousel ---- */
+
+/* User-driven: nothing moves unless the reader moves it. Full-bleed track
+   whose first card still lines up with the page gutter. */
+.carousel {
+  --edge: max(var(--pad), calc((100vw - 1440px) / 2 + var(--pad)));
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--edge);
+  padding-inline: var(--edge);
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+.carousel > * {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+/* ------------------------------------------------------------- stepper ---- */
+
+/* Home-page process: five stages on one line, with a single dot travelling
+   the rail. The only motion in the section, and it never covers text. */
+.stepper__rail {
   position: absolute;
-  visibility: hidden;
-  pointer-events: none;
-  white-space: nowrap;
-  top: 0;
   left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--rule-strong);
 }
-
-@keyframes rot-in {
+.stepper__dot {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px rgba(216, 30, 32, 0.14);
+  animation: stepper-travel 12s linear infinite;
+}
+@keyframes stepper-travel {
   from {
-    transform: translateY(var(--rotator-travel));
-    opacity: 0;
+    left: 0%;
   }
   to {
-    transform: translateY(0);
-    opacity: 1;
+    left: calc(100% - 9px);
   }
 }
-@keyframes rot-out {
-  from {
-    transform: translateY(0);
-    opacity: 1;
+/* vertical on phones */
+@media (max-width: 1023px) {
+  .stepper__rail {
+    left: 4px;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    height: auto;
   }
-  to {
-    transform: translateY(calc(var(--rotator-travel) * -1));
-    opacity: 0;
+  .stepper__dot {
+    left: -4px;
+    top: 0;
+    animation-name: stepper-travel-y;
+  }
+  @keyframes stepper-travel-y {
+    from {
+      top: 0%;
+    }
+    to {
+      top: calc(100% - 9px);
+    }
   }
 }
 
@@ -438,32 +424,28 @@ html.lenis body {
 /* The contact card. The "light bending" at the edges is three layers:
    a backdrop blur+saturate for the refraction through the pane, an inset
    highlight ring that catches light on the top-left and shadow on the
-   bottom-right, and a soft specular sweep across the surface. */
+   bottom-right, and a fixed specular band across the surface. */
 .glass {
   position: relative;
   isolation: isolate;
   border-radius: 28px;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 255, 255, 0.44) 48%,
-    rgba(255, 255, 255, 0.62) 100%
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.5) 48%,
+    rgba(255, 255, 255, 0.68) 100%
   );
   backdrop-filter: blur(26px) saturate(165%);
   -webkit-backdrop-filter: blur(26px) saturate(165%);
   box-shadow:
-    /* the bent-light rim */
     inset 1px 1px 0 rgba(255, 255, 255, 0.95),
     inset -1px -1px 0 rgba(10, 10, 10, 0.06),
-    /* thickness of the pane */
     inset 0 0 40px rgba(255, 255, 255, 0.35),
-    /* cast shadow, so it floats rather than sits */
     0 30px 70px -30px rgba(10, 10, 10, 0.3),
     0 4px 14px -6px rgba(10, 10, 10, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
-/* specular sweep: a slow highlight travelling across the pane */
 .glass::before {
   content: "";
   position: absolute;
@@ -471,24 +453,13 @@ html.lenis body {
   z-index: -1;
   border-radius: inherit;
   background: linear-gradient(
-    100deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.55) 42%,
-    rgba(255, 255, 255, 0.18) 52%,
-    transparent 72%
+    105deg,
+    transparent 18%,
+    rgba(255, 255, 255, 0.5) 34%,
+    rgba(255, 255, 255, 0.12) 44%,
+    transparent 62%
   );
-  background-size: 260% 100%;
-  animation: glass-sweep 9s ease-in-out infinite;
   pointer-events: none;
-}
-@keyframes glass-sweep {
-  0%,
-  100% {
-    background-position: 130% 0;
-  }
-  50% {
-    background-position: -30% 0;
-  }
 }
 
 /* corner refraction: brighter, tighter light right at the radii */
@@ -518,31 +489,34 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* form controls inside the pane read as etched into the glass */
 .glass-field {
   width: 100%;
-  border: 1px solid rgba(10, 10, 10, 0.1);
+  border: 1px solid rgba(10, 10, 10, 0.14);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.7);
   padding: 0.85rem 1rem;
-  font-size: 0.95rem;
+  font-size: 1rem; /* 16px stops iOS zooming the page on focus */
+  line-height: 1.4;
   color: var(--ink);
   outline: none;
   transition:
-    border-color 0.25s var(--ease),
-    background-color 0.25s var(--ease),
-    box-shadow 0.25s var(--ease);
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
 }
 .glass-field::placeholder {
-  color: rgba(10, 10, 10, 0.32);
+  color: rgba(10, 10, 10, 0.42);
 }
 .glass-field:hover {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.85);
 }
 .glass-field:focus {
   border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.9);
+  background: #fff;
   box-shadow: 0 0 0 4px rgba(216, 30, 32, 0.12);
+}
+.glass-field[aria-invalid="true"] {
+  border-color: var(--accent);
 }
 select.glass-field {
   appearance: none;
@@ -552,45 +526,11 @@ select.glass-field {
   padding-right: 2.4rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .glass::before {
-    animation: none;
-  }
-}
+/* ------------------------------------------------------- live diagrams ---- */
 
-/* -------------------------------------------------------- work diagrams -- */
-
-/* One-shot entrance, applied only once the card is in view. */
-.wa-fade {
-  opacity: 0;
-}
-.wa-fade.wa-on {
-  animation: pa-fade 0.6s var(--ease) forwards;
-}
-.wa-slide {
-  opacity: 0;
-}
-.wa-slide.wa-on {
-  animation: wa-slide 0.7s var(--ease) forwards;
-}
-@keyframes wa-slide {
-  from {
-    opacity: 0;
-    transform: translateX(-14px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.wa-draw {
-  stroke-dasharray: 520;
-  stroke-dashoffset: 520;
-}
-.wa-draw.wa-on {
-  animation: pa-draw 1.5s var(--ease) 0.25s forwards;
-}
-/* ambient loops keep a card alive after its entrance has finished */
+/* Case and stage diagrams are drawn static; only the packets travelling
+   through them move (SVG animateMotion), so the meaning is readable on the
+   first frame. */
 .wa-ring {
   transform-origin: 160px 100px;
   animation: wa-ring 3.4s ease-out infinite;
@@ -606,54 +546,6 @@ select.glass-field {
     opacity: 0;
   }
 }
-.wa-pulse {
-  animation: wa-pulse 1.8s ease-in-out infinite alternate;
-}
-@keyframes wa-pulse {
-  to {
-    r: 6.5;
-  }
-}
-
-/* ----------------------------------------------------- process diagrams -- */
-
-.pa-fade {
-  opacity: 0;
-  animation: pa-fade 0.7s var(--ease) forwards;
-}
-@keyframes pa-fade {
-  to {
-    opacity: 1;
-  }
-}
-.pa-grow {
-  opacity: 0;
-  animation: pa-grow 0.7s var(--ease) forwards;
-}
-@keyframes pa-grow {
-  from {
-    opacity: 0;
-    transform: scaleX(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-}
-.pa-draw {
-  stroke-dasharray: 320;
-  stroke-dashoffset: 320;
-  animation: pa-draw 1.4s var(--ease) 0.3s forwards;
-}
-@keyframes pa-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.pa-num {
-  opacity: 0;
-  animation: pa-fade 0.6s var(--ease) 0.5s forwards;
-}
 
 /* ------------------------------------------------------- keyword field ---- */
 
@@ -668,8 +560,7 @@ select.glass-field {
 }
 
 /* Soft colour fields behind everything. Glass has nothing to refract on a flat
-   white page — these give the pane something to blur and bend, which is what
-   makes the effect read at all. */
+   white page — these give the pane something to blur and bend. */
 .kw-scene::before,
 .kw-scene::after {
   content: "";
@@ -689,7 +580,6 @@ select.glass-field {
     rgba(216, 30, 32, 0.05) 45%,
     transparent 70%
   );
-  animation: kw-blob 22s ease-in-out infinite alternate;
 }
 .kw-scene::after {
   width: 52vw;
@@ -698,25 +588,17 @@ select.glass-field {
   bottom: -6vh;
   background: radial-gradient(
     circle,
-    rgba(10, 10, 10, 0.14) 0%,
+    rgba(10, 10, 10, 0.12) 0%,
     rgba(10, 10, 10, 0.04) 45%,
     transparent 70%
   );
-  animation: kw-blob 28s ease-in-out infinite alternate-reverse;
-}
-@keyframes kw-blob {
-  to {
-    transform: translate3d(6vw, -4vh, 0) scale(1.12);
-  }
 }
 
 .kw-field {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  /* whole-field tilt follows the pointer */
   transform: rotateY(calc(var(--px, 0) * 7deg)) rotateX(calc(var(--py, 0) * -5deg));
-  transition: transform 0.1s linear;
 }
 
 .kw-word {
@@ -731,29 +613,25 @@ select.glass-field {
   letter-spacing: 0.02em;
   font-size: calc(var(--size, 1) * clamp(0.85rem, 1.5vw, 1.6rem));
   color: var(--ink);
-  /* far words fade back, near words sit forward */
   opacity: calc(0.035 + var(--depth, 0.5) * 0.085);
   transform-style: preserve-3d;
   transform: translate3d(
-      calc(-50% + (var(--px, 0) * var(--depth, 0.5) * 44px)),
-      calc(-50% + (var(--py, 0) * var(--depth, 0.5) * 34px)),
-      var(--z)
-    );
+    calc(-50% + (var(--px, 0) * var(--depth, 0.5) * 44px)),
+    calc(-50% + (var(--py, 0) * var(--depth, 0.5) * 34px)),
+    var(--z)
+  );
+  /* The slow bob runs on the independent `translate` property, which
+     composes with the parallax transform without forcing layout. */
   animation: kw-drift var(--drift, 18s) ease-in-out infinite alternate;
   animation-delay: var(--drift-delay, 0s);
-  will-change: transform;
 }
-
-/* every other word picks up the accent, so the field isn't uniform grey */
 .kw-word:nth-child(4n + 2) {
   color: var(--accent);
   opacity: calc(0.045 + var(--depth, 0.5) * 0.11);
 }
-
 @keyframes kw-drift {
   to {
-    /* a slow independent bob layered on top of the pointer parallax */
-    margin-top: -14px;
+    translate: 0 -14px;
   }
 }
 
@@ -765,6 +643,9 @@ select.glass-field {
   position: relative;
   overflow: hidden;
   pointer-events: none;
+  /* lets a walker cross exactly this strip's width (100cqw), whether the
+     strip is full-bleed or a narrow lane inside a card */
+  container-type: inline-size;
 }
 
 .char-walk {
@@ -779,14 +660,13 @@ select.glass-field {
 }
 @keyframes char-cross {
   from {
-    transform: translateX(-12vw);
+    transform: translateX(-60px);
   }
   to {
-    transform: translateX(100vw);
+    transform: translateX(100cqw);
   }
 }
 
-/* a small vertical bounce so the walk doesn't glide */
 .char-bob {
   animation: char-bob 0.62s ease-in-out infinite alternate;
   transform-origin: 50% 100%;
@@ -813,7 +693,6 @@ select.glass-field {
   }
 }
 
-/* the pushed block gives a touch, so it reads as resistance */
 .char-push {
   animation: char-push 0.62s ease-in-out infinite alternate;
 }
@@ -823,9 +702,9 @@ select.glass-field {
   }
 }
 
-/* ladder climb: up the rails, then reset out of sight */
 .char-ladder {
   position: absolute;
+  inset: 0;
   pointer-events: none;
 }
 .char-climb {
@@ -849,9 +728,6 @@ select.glass-field {
   }
 }
 
-.char-standup {
-  pointer-events: none;
-}
 .char-point {
   transform-origin: 17px 16px;
   animation: char-point 2.6s ease-in-out infinite alternate;
@@ -887,172 +763,23 @@ select.glass-field {
   }
 }
 
-/* ------------------------------------------------------------ marquee ---- */
-
-.marquee {
-  overflow: hidden;
-  white-space: nowrap;
-}
-.marquee__track {
-  display: inline-flex;
-  align-items: center;
-  gap: 2.5rem;
-  padding-right: 2.5rem;
-  will-change: transform;
-  animation: marquee var(--marquee-dur, 42s) linear infinite;
-  animation-direction: var(--marquee-dir, normal);
-}
-.marquee:hover .marquee__track {
-  animation-play-state: paused;
-}
-
-/* Card rails. The plain marquee keeps its row on one line, but cards carry
-   real prose: nowrap has to be undone inside them or every quote renders as a
-   single line running off its box. Stretch is set here rather than with a
-   utility class, because unlayered CSS beats Tailwind's layered utilities and
-   `align-items: center` above would otherwise win. */
-.marquee--cards .marquee__track {
-  align-items: stretch;
-}
-.marquee--cards .marquee__track > * {
-  white-space: normal;
-}
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/* ------------------------------------------------------- scroll reveal ---- */
-
-/* One reveal primitive. Components add .reveal and an optional --reveal-delay
-   rather than each writing its own GSAP tween. */
-.reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity 0.75s var(--ease) var(--reveal-delay, 0s),
-    transform 0.75s var(--ease) var(--reveal-delay, 0s);
-}
-.reveal.is-in {
-  opacity: 1;
-  transform: none;
-}
-
-.reveal-line {
-  display: block;
-  overflow: hidden;
-}
-.reveal-line > * {
-  display: block;
-  transform: translateY(105%);
-  transition: transform 0.9s var(--ease) var(--reveal-delay, 0s);
-}
-.is-in .reveal-line > *,
-.reveal-line.is-in > * {
-  transform: none;
-}
-
-/* --------------------------------------------------------- case stack ---- */
-
-/* Cases stack: each plate pins below the header while the next one rises over
-   it. The slot is taller than the viewport so a pinned plate gets a stretch of
-   scroll to itself before the next begins to cover it — without that dwell,
-   each case is fully visible for only a single frame. */
-.case-section {
-  position: relative;
-  height: 150svh;
-}
-
-.case-plate {
-  position: sticky;
-  top: var(--header-h);
-  height: calc(100svh - var(--header-h));
-  background: var(--bg);
-}
-
-/* Absolute inset rather than margins, so the plate can never add to its own
-   height and push its footer out of view. */
-.case-plate > .frame {
-  position: absolute;
-  inset: var(--frame-inset);
-  width: auto;
-  margin: 0;
-}
-
-/* Let the artwork give up space to the title block instead of forcing the
-   column taller than the plate. On narrow screens the type needs most of the
-   plate, so the art is capped rather than merely flexible. */
-.case-art {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-@media (max-width: 767px) {
-  .case-art {
-    flex: 0 1 34%;
-  }
-}
-
-/* --------------------------------------------------------------- misc ---- */
-
-.rule-t {
-  border-top: var(--stroke) solid var(--rule);
-}
-.rule-b {
-  border-bottom: var(--stroke) solid var(--rule);
-}
-
-.grain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.028;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 140px 140px;
-}
-
-.caret {
-  animation: caret 1.05s steps(1) infinite;
-}
-@keyframes caret {
-  50% {
-    opacity: 0;
-  }
-}
-
 /* ------------------------------------------------------ reduced motion ---- */
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
-  .reveal-line > * {
-    transform: none;
   }
   .char-strip,
-  .char-ladder {
+  .char-ladder,
+  .stepper__dot,
+  .packet {
     display: none;
-  }
-  .kw-word,
-  .kw-scene::before,
-  .kw-scene::after {
-    animation: none;
-  }
-  .case-section {
-    height: auto;
-  }
-  .case-plate {
-    position: relative;
-    top: 0;
-    height: 88svh;
   }
 }

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { services, site } from "@/lib/content";
 
+const fieldLabel = "block text-sm font-semibold text-ink";
+
 type Status = "idle" | "sending" | "sent" | "error";
 
 export default function ContactForm() {
@@ -49,7 +51,7 @@ export default function ContactForm() {
     return (
       <div className="glass p-8 text-center sm:p-12">
         <p className="label text-accent">Message sent</p>
-        <h2 className="display mt-4 text-[clamp(1.6rem,3.4vw,2.6rem)]">
+        <h2 className="display mt-4 text-[clamp(1.75rem,3.4vw,2.5rem)]">
           Thanks &mdash; I&apos;ll be in touch
         </h2>
         <p className="mx-auto mt-4 max-w-[38ch] leading-relaxed text-muted">
@@ -69,16 +71,7 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} className="glass p-6 sm:p-8" noValidate>
-      {/* Stacked on a phone: side by side, both labels wrapped to two lines. */}
-      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-        <p className="label text-ink-40">Start a conversation</p>
-        <p className="label flex items-center gap-2 text-ink-40">
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
-          {site.availability}
-        </p>
-      </div>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Your name"
           name="name"
@@ -104,7 +97,7 @@ export default function ContactForm() {
           error={errors.email}
         />
         <div>
-          <label htmlFor="service" className="label block text-ink-40">
+          <label htmlFor="service" className={fieldLabel}>
             Service <span className="text-accent">*</span>
           </label>
           <select
@@ -112,7 +105,7 @@ export default function ContactForm() {
             name="service"
             required
             defaultValue=""
-            className="glass-field mt-2.5"
+            className="glass-field mt-2"
             aria-invalid={Boolean(errors.service)}
           >
             <option value="" disabled>
@@ -129,7 +122,7 @@ export default function ContactForm() {
       </div>
 
       <div className="mt-4">
-        <label htmlFor="problem" className="label block text-ink-40">
+        <label htmlFor="problem" className={fieldLabel}>
           Problem statement <span className="text-accent">*</span>
         </label>
         <textarea
@@ -138,7 +131,7 @@ export default function ContactForm() {
           rows={4}
           required
           placeholder="What's fuzzy? Half-formed is fine — that's usually where the useful work is."
-          className="glass-field mt-2.5 resize-none"
+          className="glass-field mt-2 resize-none"
           aria-invalid={Boolean(errors.problem)}
         />
         {errors.problem && <Err>{errors.problem}</Err>}
@@ -153,11 +146,15 @@ export default function ContactForm() {
       <div className="mt-6 flex flex-wrap items-center gap-4">
         <button type="submit" className="pill pill--solid" disabled={status === "sending"}>
           {status === "sending" ? "Sending…" : "Send it over"}
-          {status !== "sending" && <span aria-hidden>&rarr;</span>}
+          {status !== "sending" && (
+            <span className="arrow" aria-hidden>
+              &rarr;
+            </span>
+          )}
         </button>
-        <p className="text-xs leading-relaxed text-ink-40">
+        <p className="text-sm leading-relaxed text-muted">
           Or email{" "}
-          <a href={`mailto:${site.email}`} className="ulink text-ink">
+          <a href={`mailto:${site.email}`} className="tlink text-ink">
             {site.email}
           </a>
         </p>
@@ -195,7 +192,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="label block text-ink-40">
+      <label htmlFor={name} className={fieldLabel}>
         {label}
         {required && <span className="text-accent"> *</span>}
       </label>
@@ -205,7 +202,7 @@ function Field({
         type={type}
         required={required}
         placeholder={placeholder}
-        className="glass-field mt-2.5"
+        className="glass-field mt-2"
         aria-invalid={Boolean(error)}
       />
       {error && <Err>{error}</Err>}

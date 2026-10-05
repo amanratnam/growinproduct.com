@@ -1,84 +1,56 @@
-"use client";
-
 import Link from "next/link";
-import Section from "./Section";
-import Reveal from "./Reveal";
+import SectionHead from "./SectionHead";
+import CaseArt from "./CaseArt";
 import { cases } from "@/lib/content";
 
-/* Home-page stand-in for the full work index. Numbers only, no fluff: the
-   headline figure from every engagement, on a rail that never stops moving,
-   plus one route into the detail. */
-
-/* Flattened so the ticker reads as a single continuous stream of outcomes
-   rather than four separate cards. */
-const outcomes = cases.flatMap((c) =>
-  c.stats.map(([value, label]) => ({ value, label, sector: c.sector }))
-);
-
-function Ticker({ reverse = false, duration }: { reverse?: boolean; duration: number }) {
-  const run = [...outcomes, ...outcomes];
-  return (
-    <div
-      className="marquee marquee--cards"
-      style={
-        {
-          "--marquee-dur": `${duration}s`,
-          "--marquee-dir": reverse ? "reverse" : "normal",
-        } as React.CSSProperties
-      }
-      aria-hidden
-    >
-      <div className="marquee__track !gap-px !pr-px">
-        {run.map((o, i) => (
-          <div
-            key={i}
-            className="group flex w-[min(52vw,240px)] shrink-0 flex-col justify-between border border-rule bg-bg px-4 py-5 transition-colors duration-300 hover:border-accent sm:w-[clamp(180px,20vw,240px)] sm:px-5 sm:py-6"
-          >
-            <p className="display text-[1.75rem] transition-colors duration-300 group-hover:text-accent sm:text-[clamp(1.6rem,3vw,2.6rem)]">
-              {o.value}
-            </p>
-            <div className="mt-3.5 sm:mt-4">
-              <p className="label text-ink">{o.label}</p>
-              <p className="label mt-1.5 text-ink-40">{o.sector}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
+/* Home-page proof. One headline result per engagement, each with its own live
+   diagram, so the section is always in motion without the numbers themselves
+   ever sliding out from under the reader. Every card opens its case study. */
 export default function ImpactSummary() {
   return (
-    <Section
-      id="impact"
-      eyebrow="Impact"
-      index={`${String(cases.length).padStart(2, "0")} engagements`}
-      title={
-        <>
-          The numbers,
-          <br />
-          not the narrative
-        </>
-      }
-      blurb="Every figure below came out of a shipped engagement. Clients are anonymised; the results are not."
-    >
-      {/* two rails drifting opposite ways, so the section is never still */}
-      <div className="space-y-px">
-        <Ticker duration={64} />
-        <Ticker duration={78} reverse />
-      </div>
+    <section id="impact" className="surface-ink section">
+      <div className="shell">
+        <SectionHead
+          invert
+          title={
+            <>
+              The numbers,
+              <br />
+              not the narrative
+            </>
+          }
+          link={{ href: "/work", label: "Read the case studies" }}
+        />
 
-      <Reveal className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-rule pt-8 md:flex-row md:items-center">
-        <p className="max-w-[44ch] leading-relaxed text-muted">
-          Each of these is a full case study &mdash; the problem, what we
-          actually changed, and what moved as a result.
-        </p>
-        <Link href="/work" className="pill pill--solid shrink-0">
-          See the work
-          <span aria-hidden>&rarr;</span>
-        </Link>
-      </Reveal>
-    </Section>
+        <ul className="mt-[var(--head-gap)] grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {cases.map((c) => (
+            <li key={c.id}>
+              <Link
+                href={`/work#${c.id}`}
+                className="group flex h-full flex-col rounded-[var(--radius)] border border-[var(--rule-ink)] bg-white/[0.03] p-4 transition-colors duration-300 hover:border-white/40 hover:bg-white/[0.06] sm:p-6"
+              >
+                <div className="h-16 sm:h-28">
+                  <CaseArt id={c.id} className="text-white/30" />
+                </div>
+                <p className="display h-figure mt-5 text-white sm:mt-7">{c.metric.value}</p>
+                <p className="mt-2.5 text-[0.9375rem] leading-snug text-[var(--on-ink)] sm:text-base">
+                  {c.metric.label}
+                </p>
+                {/* mt-auto pins the footer to the card floor, pt-6 keeps a
+                    minimum gap above it when the label runs long */}
+                <div className="mt-auto pt-6">
+                  <p className="flex items-center justify-between gap-3 border-t border-[var(--rule-ink)] pt-4 text-sm text-[var(--on-ink-faint)] transition-colors duration-300 group-hover:text-white">
+                    {c.sector}
+                    <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
+                      &rarr;
+                    </span>
+                  </p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }

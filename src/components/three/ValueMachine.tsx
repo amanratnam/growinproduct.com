@@ -324,7 +324,7 @@ function FitCamera() {
     const aspect = size.width / Math.max(size.height, 1);
     const perspective = camera as THREE.PerspectiveCamera;
     /* Distance needed to fit SCENE_WIDTH horizontally at this aspect. */
-    const SCENE_WIDTH = 11;
+    const SCENE_WIDTH = 9.8;
     const vFov = (perspective.fov * Math.PI) / 180;
     const needed = SCENE_WIDTH / (2 * aspect * Math.tan(vFov / 2));
     /* Hold the isometric direction; only the distance along it changes. */

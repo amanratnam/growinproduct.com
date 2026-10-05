@@ -1,5 +1,3 @@
-"use client";
-
 /* ---------------------------------------------------------------------------
    Small inhabitants for the long-form pages. They live in their own strip of
    the layout rather than sitting inside content: one walks the full width, one
@@ -44,7 +42,12 @@ export function Walker({
       }
       aria-hidden
     >
-      <svg viewBox="0 0 46 30" className="h-full w-auto" style={{ overflow: "visible" }}>
+      {/* mirrored when walking right-to-left, so nobody moonwalks */}
+      <svg
+        viewBox="0 0 46 30"
+        className="h-full w-auto"
+        style={{ overflow: "visible", transform: reverse ? "scaleX(-1)" : undefined }}
+      >
         <g className="char-bob">
           <Figure accent={accent} />
           {/* legs, alternating */}
@@ -54,9 +57,9 @@ export function Walker({
           </g>
           {/* the document being carried */}
           <g transform="translate(26 12)">
-            <rect width="15" height="18" rx="1.5" fill="none" stroke="var(--rule)" strokeWidth="1.4" />
-            <line x1="3" y1="5" x2="12" y2="5" stroke="var(--rule)" strokeWidth="1.4" />
-            <line x1="3" y1="9" x2="12" y2="9" stroke="var(--rule)" strokeWidth="1.4" />
+            <rect width="15" height="18" rx="1.5" fill="none" stroke="var(--rule-strong)" strokeWidth="1.4" />
+            <line x1="3" y1="5" x2="12" y2="5" stroke="var(--rule-strong)" strokeWidth="1.4" />
+            <line x1="3" y1="9" x2="12" y2="9" stroke="var(--rule-strong)" strokeWidth="1.4" />
             <line x1="3" y1="13" x2="8" y2="13" stroke="var(--accent)" strokeWidth="1.4" />
           </g>
           <line
@@ -81,8 +84,8 @@ export function Climber({ duration = 16 }: { duration?: number }) {
     <div className="char-ladder" aria-hidden>
       <svg viewBox="0 0 34 220" className="h-full w-full" style={{ overflow: "visible" }}>
         {/* rails */}
-        <line x1="9" y1="0" x2="9" y2="220" stroke="var(--rule)" strokeWidth="1.6" />
-        <line x1="25" y1="0" x2="25" y2="220" stroke="var(--rule)" strokeWidth="1.6" />
+        <line x1="9" y1="0" x2="9" y2="220" stroke="var(--rule-strong)" strokeWidth="1.6" />
+        <line x1="25" y1="0" x2="25" y2="220" stroke="var(--rule-strong)" strokeWidth="1.6" />
         {Array.from({ length: 11 }).map((_, i) => (
           <line
             key={i}
@@ -90,7 +93,7 @@ export function Climber({ duration = 16 }: { duration?: number }) {
             y1={12 + i * 20}
             x2="25"
             y2={12 + i * 20}
-            stroke="var(--rule)"
+            stroke="var(--rule-strong)"
             strokeWidth="1.6"
           />
         ))}
@@ -149,10 +152,13 @@ export function Pusher({ duration = 28, delay = 0 }: { duration?: number; delay?
    loops in place — for a column edge rather than a full-width strip. */
 export function Standup() {
   return (
-    <div className="char-standup" aria-hidden>
-      <svg viewBox="0 0 120 80" className="h-full w-full">
+    <div aria-hidden>
+      {/* viewBox is cropped to the drawing itself, so the svg's box is the
+          scene's box and nothing placed after it can overlap the figures */}
+      <svg viewBox="0 0 120 60" className="block h-auto w-full">
+        <line x1="0" y1="56.5" x2="120" y2="56.5" stroke="var(--rule-strong)" strokeWidth="1.2" />
         {/* board */}
-        <rect x="46" y="4" width="70" height="48" fill="none" stroke="var(--rule)" strokeWidth="1.6" />
+        <rect x="46" y="4" width="70" height="48" fill="none" stroke="var(--rule-strong)" strokeWidth="1.6" />
         <polyline
           className="char-chart"
           points="54,44 68,36 82,40 96,24 108,14"
@@ -161,7 +167,7 @@ export function Standup() {
           strokeWidth="2"
           strokeLinecap="round"
         />
-        <line x1="54" y1="12" x2="76" y2="12" stroke="var(--rule)" strokeWidth="1.6" />
+        <line x1="54" y1="12" x2="76" y2="12" stroke="var(--rule-strong)" strokeWidth="1.6" />
         {/* presenter */}
         <g transform="translate(6 26) scale(1.15)">
           <Figure accent />

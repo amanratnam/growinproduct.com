@@ -1,101 +1,105 @@
-"use client";
+import Link from "next/link";
+import { services, type ServiceIcon } from "@/lib/content";
 
-import { useState } from "react";
-import Section from "./Section";
-import Reveal from "./Reveal";
-import { services } from "@/lib/content";
-
-/* An index list rather than a card grid. Each row is a rule-separated line
-   that expands in place on hover or focus, which keeps the left edge of every
-   title on one axis — cards never managed that. */
-export default function ServiceIndex() {
-  const [open, setOpen] = useState<number | null>(0);
-
+/* Line icons, one per discipline, so the grid can be scanned before it's
+   read. Same 24px box and stroke as each other, accent only. */
+function Icon({ name }: { name: ServiceIcon }) {
+  const p = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
   return (
-    <Section
-      id="services"
-      eyebrow="Services"
-      index={`${String(services.length).padStart(2, "0")} disciplines`}
-      title={
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden>
+      {name === "strategy" && (
         <>
-          Every layer of
-          <br />
-          the product
+          <circle cx="12" cy="12" r="9" {...p} />
+          <path d="M15.5 8.5l-2 5-5 2 2-5 5-2z" {...p} />
         </>
-      }
-      blurb="Six disciplines, one operator, no handoffs between the person who scopes the work and the person who does it. Open a row to see what ships."
-    >
-      <ul className="rule-t">
-        {services.map((service, i) => {
-          const isOpen = open === i;
-          return (
-            <li key={service.id} className="rule-b">
-              <Reveal delay={i * 0.04}>
-                <button
-                  type="button"
-                  aria-expanded={isOpen}
-                  aria-controls={`service-${service.id}`}
-                  onMouseEnter={() => setOpen(i)}
-                  onFocus={() => setOpen(i)}
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  className="group grid w-full grid-cols-12 items-baseline gap-x-3 py-4 text-left transition-colors duration-300 md:gap-x-4 md:py-7"
-                >
-                  <span className="label col-span-2 text-ink-40 transition-colors duration-300 group-hover:text-accent md:col-span-1">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+      )}
+      {name === "analysis" && (
+        <>
+          <path d="M4 20V13M8.5 20V9M13 20v-5" {...p} />
+          <circle cx="17" cy="8" r="3.5" {...p} />
+          <path d="M19.5 10.5L22 13" {...p} />
+        </>
+      )}
+      {name === "spec" && (
+        <>
+          <path d="M6 3h8l4 4v14H6z" {...p} />
+          <path d="M14 3v4h4M9 12h6M9 16h4" {...p} />
+        </>
+      )}
+      {name === "workflow" && (
+        <>
+          <rect x="3" y="4" width="6" height="5" rx="1.2" {...p} />
+          <rect x="15" y="15" width="6" height="5" rx="1.2" {...p} />
+          <path d="M9 6.5h3.5a2 2 0 0 1 2 2v6.5" {...p} />
+        </>
+      )}
+      {name === "ai" && (
+        <>
+          <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" {...p} />
+          <path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z" {...p} />
+        </>
+      )}
+      {name === "lead" && (
+        <>
+          <circle cx="9" cy="7.5" r="3.5" {...p} />
+          <path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6" {...p} />
+          <path d="M17 11l3-3 0 0M20 8v3.2M20 8h-3.2" {...p} />
+        </>
+      )}
+    </svg>
+  );
+}
 
-                  <span
-                    className={`display col-span-10 text-[clamp(1.3rem,3.4vw,2.6rem)] transition-colors duration-300 md:col-span-6 ${
-                      isOpen ? "text-accent" : "text-ink group-hover:text-accent"
-                    }`}
-                  >
-                    {service.title}
-                  </span>
+/* Six disciplines as six readable cards. The old version hid the detail
+   behind hover-to-expand rows, which shifted the page under the cursor and
+   meant nobody saw more than one service at a time. */
+export default function ServiceIndex() {
+  return (
+    <section id="services" className="section">
+      <div className="shell grid gap-x-12 gap-y-[var(--head-gap)] lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <div className="lg:sticky lg:top-[calc(var(--header-h)+40px)]">
+            <h2 className="display h-section">
+              Bring me
+              <br />
+              in for
+            </h2>
+            <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-muted">
+              Not sure which one you need? Most people aren&apos;t. Describe the problem and
+              I&apos;ll tell you where to start.
+            </p>
+            <Link href="/contact" className="alink mt-6">
+              Describe your problem
+            </Link>
+          </div>
+        </div>
 
-                  <span className="col-span-12 mt-2.5 pl-[calc(16.666%)] text-[13px] leading-relaxed text-muted md:col-span-4 md:mt-0 md:pl-0 md:text-sm">
-                    {service.summary}
-                  </span>
-
-                  <span
-                    className={`col-span-12 hidden justify-end text-xl text-ink-40 transition-transform duration-500 md:col-span-1 md:flex ${
-                      isOpen ? "rotate-45 text-accent" : "group-hover:rotate-45"
-                    }`}
-                    aria-hidden
-                  >
-                    +
-                  </span>
-                </button>
-
-                {/* grid-template-rows animates cleanly from 0 without needing a
-                    measured pixel height */}
-                <div
-                  id={`service-${service.id}`}
-                  className="grid transition-[grid-template-rows] duration-500 ease-[var(--ease)]"
-                  style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
-                >
-                  <div className="overflow-hidden">
-                    <div className="grid grid-cols-12 gap-x-4 gap-y-4 pb-7 md:pb-9">
-                      <div className="col-span-12 pl-[calc(16.666%)] md:col-start-2 md:col-span-6 md:pl-0">
-                        <p className="max-w-[54ch] leading-relaxed text-ink">{service.detail}</p>
-                      </div>
-                      <div className="col-span-12 pl-[calc(16.666%)] md:col-span-4 md:pl-0">
-                        <p className="label text-ink-40">Deliverables</p>
-                        <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-                          {service.deliverables.map((d) => (
-                            <li key={d} className="text-sm text-muted">
-                              {d}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:col-span-8">
+          {services.map((s) => (
+            <li key={s.id} className="card flex flex-col p-5 sm:p-7">
+              <div className="flex items-center gap-4">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[var(--radius-sm)] bg-sand text-accent">
+                  <Icon name={s.icon} />
+                </span>
+                <h3 className="h-card">{s.title}</h3>
+              </div>
+              <p className="mt-4 leading-relaxed text-muted">{s.summary}</p>
+              <p className="mt-auto pt-5 text-sm leading-relaxed text-faint">
+                <span className="block border-t border-rule pt-4">
+                  <span className="font-semibold text-ink">You get </span>
+                  {s.deliverables.join(" · ")}
+                </span>
+              </p>
             </li>
-          );
-        })}
-      </ul>
-    </Section>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
